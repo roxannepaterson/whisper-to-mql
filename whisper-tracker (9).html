@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Whisper to MQL Criteria Check</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,500;0,600;1,500;1,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1E2A32; --ink-soft:#4A5A63; --paper:#F6F4EE; --panel:#FFFFFF; --line:#DAD5C8;
+    --gold:#B9922F; --promoter:#5F8768; --promoter-soft:#E4EDE3; --neutral-soft:#EFEBE0;
+    --detractor:#B0563F; --shadow:0 2px 10px rgba(30,42,50,0.08);
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; background:var(--paper); color:var(--ink); font-family:'IBM Plex Sans', sans-serif; -webkit-font-smoothing:antialiased; }
+  .wrap{ max-width:1100px; margin:0 auto; padding:28px 24px 60px; }
+  .eyebrow{ font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); margin:0 0 6px; }
+  h1{ font-family:'Newsreader', serif; font-style:italic; font-weight:600; font-size:32px; margin:0 0 4px; }
+  .sub{ color:var(--ink-soft); font-size:13px; margin:0 0 6px; }
+  .status-row{ font-size:12px; color:var(--ink-soft); margin:0 0 8px; }
+  .error-row{ display:none; font-size:12px; font-weight:600; color:var(--detractor); margin:0 0 8px; }
+  .draft-note{
+    background:var(--neutral-soft); border:1px solid var(--line); border-radius:8px;
+    padding:10px 14px; font-size:12px; color:var(--ink-soft); margin:0 0 20px;
+  }
+
+  .toolrow{ display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+  button{ font-family:'IBM Plex Sans', sans-serif; font-weight:600; font-size:13px; cursor:pointer; border-radius:7px; border:1px solid var(--ink); background:var(--ink); color:var(--paper); padding:9px 14px; }
+  button.secondary{ background:transparent; color:var(--ink); border:1px solid var(--line); }
+  button.small{ padding:5px 10px; font-size:12px; }
+  button:hover{ opacity:0.85; }
+
+  .card-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(380px, 1fr)); gap:18px; }
+  .whisper-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow);
+    padding:22px; border-left:5px solid var(--neutral-soft);
+  }
+  .whisper-card.verified{ border-left:5px solid var(--promoter); }
+  .wc-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:12px; }
+  .wc-name{ font-family:'Newsreader', serif; font-style:italic; font-weight:600; font-size:22px; margin:0; }
+  .badge{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; font-weight:700; text-transform:uppercase;
+    letter-spacing:0.03em; padding:5px 11px; border-radius:12px; white-space:nowrap;
+  }
+  .badge.verified{ background:var(--promoter-soft); color:var(--promoter); }
+  .badge.pending{ background:var(--neutral-soft); color:var(--ink-soft); }
+  .wc-field{ margin:10px 0; }
+  .wc-field .lbl{
+    display:block; color:var(--ink-soft); font-weight:700; font-size:10.5px;
+    text-transform:uppercase; letter-spacing:0.04em; margin-bottom:2px;
+  }
+  .wc-field .val{ display:block; color:var(--ink); font-size:14.5px; line-height:1.4; }
+  .wc-actions{ display:flex; justify-content:flex-end; gap:8px; margin-top:16px; }
+  .wc-actions button{ padding:7px 13px; font-size:13px; }
+  .promote-btn{ background:var(--promoter); border-color:var(--promoter); }
+
+  .wc-todo{ margin-top:14px; padding-top:12px; border-top:1px solid var(--line); }
+  .wc-todo-title{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; color:var(--ink-soft); margin:0 0 6px; }
+  .wc-todo-item{ display:flex; align-items:flex-start; gap:7px; margin:5px 0; font-size:13px; }
+  .wc-todo-item input[type=checkbox]{ margin-top:3px; flex-shrink:0; }
+  .wc-todo-item .todo-text{ flex:1; }
+  .wc-todo-item.done .todo-text{ text-decoration:line-through; color:var(--ink-soft); }
+  .wc-todo-item .todo-del{ background:none; border:none; color:var(--detractor); cursor:pointer; font-size:13px; padding:0 3px; }
+  .wc-todo-add{ display:flex; gap:6px; margin-top:8px; }
+  .wc-todo-add input{ flex:1; padding:6px 8px; border:1px solid var(--line); border-radius:6px; font-size:12.5px; font-family:'IBM Plex Sans', sans-serif; }
+  .wc-todo-add button{ padding:6px 10px; font-size:12px; }
+
+  .overlay{ position:fixed; inset:0; background:rgba(30,42,50,0.35); display:none; align-items:center; justify-content:center; z-index:100; padding:20px; }
+  .overlay.open{ display:flex; }
+  .modal{ background:var(--panel); border-radius:12px; padding:24px; width:420px; max-width:100%; max-height:88vh; overflow-y:auto; box-shadow:0 12px 40px rgba(0,0,0,0.2); }
+  .modal h3{ margin:0 0 14px; font-family:'Newsreader', serif; font-style:italic; font-weight:600; font-size:20px; }
+  .field{ margin-bottom:12px; }
+  .field label{ display:block; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-soft); margin-bottom:5px; }
+  .field input, .field textarea, .field select{ width:100%; padding:10px 11px; border:1px solid var(--line); border-radius:7px; font-family:'IBM Plex Sans', sans-serif; font-size:14.5px; color:var(--ink); background:#fff; }
+  .field textarea{ min-height:66px; resize:vertical; }
+  .modal-actions{ display:flex; justify-content:space-between; margin-top:18px; gap:8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">Pre-MQL · Early signals</p>
+  <h1>Whisper to MQL Criteria Check</h1>
+  <p class="sub">Rumours and early signals, tracked until there's enough to call them a real MQL.</p>
+  <p class="status-row" id="connStatus">Connecting…</p>
+  <p class="error-row" id="errorBanner"></p>
+
+
+  <div class="toolrow">
+    <span></span>
+    <button id="addBtn">+ Add whisper</button>
+  </div>
+
+  <div class="card-grid" id="cardGrid"></div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal" id="modalBody"></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+(async function(){
+  const firebaseConfig = {
+    apiKey: "AIzaSyCAfe2rpI8oBEytDVXHK7sxwSmtafbiUVk",
+    authDomain: "bd-tools-73705.firebaseapp.com",
+    databaseURL: "https://bd-tools-73705-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "bd-tools-73705",
+    storageBucket: "bd-tools-73705.firebasestorage.app",
+    messagingSenderId: "69658106175",
+    appId: "1:69658106175:web:c9e59018b394e17c8edb8a"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  const connStatus = document.getElementById('connStatus');
+  const errorBanner = document.getElementById('errorBanner');
+  function setStatus(t){ connStatus.textContent = t; }
+  function showError(t){ errorBanner.textContent = t; errorBanner.style.display = 'block'; }
+  window.addEventListener('error', (e)=> showError('Page error: ' + (e.message||'unknown error')));
+  window.addEventListener('unhandledrejection', (e)=> showError('Connection error: ' + (e.reason && e.reason.message ? e.reason.message : String(e.reason))));
+
+  setStatus('Connecting…');
+  await new Promise((resolve)=>{
+    firebase.auth().onAuthStateChanged((user)=>{
+      if (user){ resolve(); }
+      else {
+        firebase.auth().signInAnonymously().catch((e)=>{
+          setStatus('Could not connect.');
+          showError('Sign-in failed: ' + e.code + ' — ' + e.message);
+          resolve();
+        });
+      }
+    });
+  });
+
+  const uid = () => 'w_' + Math.random().toString(36).slice(2,10);
+  function escapeHtml(str){ const d = document.createElement('div'); d.textContent = str||''; return d.innerHTML; }
+
+  // --- Whisper criteria fields ---
+  const FIELDS = [
+    { key:'company', label:'Whisper', type:'text' },
+    { key:'location', label:'Location', type:'text' },
+    { key:'projectType', label:'Project Type', type:'text' },
+    { key:'amount', label:'Amount', type:'currency', placeholder:'150000' },
+    { key:'closeDate', label:'Close Date', type:'date' },
+    { key:'handoverDate', label:'Handover to SQL Date', type:'date' },
+    { key:'officeMove', label:'Is it a definite office move or refurbishment?', type:'select', options:['Yes','No','Unsure'], requiredValue:'Yes' },
+    { key:'compellingEvent', label:'What is the compelling event?', type:'textarea' },
+    { key:'projectDriver', label:'Who is the primary project driver?', type:'text' },
+    { key:'industry', label:'Industry', type:'text' },
+    { key:'turnover', label:'Annual Turnover', type:'text' },
+    { key:'otherLocations', label:'Other UK Locations', type:'text' },
+    { key:'workedWithUs', label:'Has the client worked with Anchorpoint before?', type:'select', options:['Yes','No'] },
+    { key:'otherInfluencers', label:'Other Influencers', type:'textarea', optional:true }
+  ];
+  const MANDATORY_FIELDS = FIELDS.filter(f => !f.optional);
+
+  let whispers = [];
+  const ref = db.ref('whisperTracker');
+
+  function objToArray(obj){
+    if (!obj) return [];
+    return Object.keys(obj).map(id => Object.assign({}, obj[id], { id }));
+  }
+
+  ref.on('value', (snapshot)=>{
+    whispers = objToArray(snapshot.val());
+    render();
+  }, (err)=> showError('Could not load: ' + err.code + ' — ' + err.message));
+
+  async function saveWhisper(w){
+    try{ await ref.child(w.id).set(w); }
+    catch(e){ showError('Save failed: ' + e.code + ' — ' + e.message); }
+  }
+  async function deleteWhisper(id){
+    try{ await ref.child(id).remove(); }
+    catch(e){ showError('Delete failed: ' + e.code + ' — ' + e.message); }
+  }
+
+  function formatDisplayValue(f, val){
+    if (f.type === 'currency'){
+      const n = parseFloat(val);
+      return isNaN(n) ? val : '£' + n.toLocaleString('en-GB');
+    }
+    if (f.type === 'date' && val){
+      const d = new Date(val + 'T00:00:00');
+      if (!isNaN(d.getTime())){
+        return d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+      }
+    }
+    return val;
+  }
+
+  function isVerified(w){
+    return MANDATORY_FIELDS.every(f => {
+      const val = (w[f.key] || '').toString().trim();
+      if (!val) return false;
+      if (f.requiredValue && val !== f.requiredValue) return false;
+      return true;
+    });
+  }
+  function filledCount(w){
+    return MANDATORY_FIELDS.filter(f => (w[f.key] || '').toString().trim().length > 0).length;
+  }
+  function missingOrFailingLabels(w){
+    return MANDATORY_FIELDS.filter(f=>{
+      const val = (w[f.key] || '').toString().trim();
+      if (!val) return true;
+      if (f.requiredValue && val !== f.requiredValue) return true;
+      return false;
+    }).map(f=>{
+      const val = (w[f.key] || '').toString().trim();
+      if (val && f.requiredValue && val !== f.requiredValue) return f.label + ' (must be "' + f.requiredValue + '")';
+      return f.label;
+    });
+  }
+
+  const grid = document.getElementById('cardGrid');
+
+  function render(){
+    grid.innerHTML = '';
+    if (!whispers.length){
+      grid.innerHTML = '<p style="color:var(--ink-soft); font-size:13px;">No whispers logged yet — click "+ Add whisper" to start.</p>';
+      return;
+    }
+    whispers.forEach(w=>{
+      const verified = isVerified(w);
+      const card = document.createElement('div');
+      card.className = 'whisper-card' + (verified ? ' verified' : '');
+      card.innerHTML = `
+        <div class="wc-head">
+          <p class="wc-name">${escapeHtml(w.company || 'Untitled')}</p>
+          <span class="badge ${verified ? 'verified' : 'pending'}">${verified ? 'Verified' : filledCount(w) + '/' + MANDATORY_FIELDS.length}</span>
+        </div>
+        ${FIELDS.slice(1).map(f=> w[f.key] ? `<div class="wc-field"><span class="lbl">${escapeHtml(f.label)}</span><span class="val">${escapeHtml(formatDisplayValue(f, w[f.key]))}</span></div>` : '').join('')}
+        ${!verified ? `<div class="wc-field" style="color:var(--detractor);"><span class="lbl" style="color:var(--detractor);">Still needed</span><ul style="margin:4px 0 0; padding-left:18px;">${missingOrFailingLabels(w).map(l=>`<li>${escapeHtml(l)}</li>`).join('')}</ul></div>` : ''}
+        <div class="wc-actions">
+          ${verified ? '<button class="promote-btn small">MQL Criteria Passed</button>' : ''}
+          <button class="secondary small edit-btn">Edit</button>
+          <button class="secondary small del-btn" style="color:var(--detractor); border-color:var(--detractor);">Remove</button>
+        </div>
+      `;
+      card.querySelector('.edit-btn').addEventListener('click', ()=> openModal(w));
+      card.querySelector('.del-btn').addEventListener('click', async ()=>{
+        if (confirm('Remove this whisper?')) await deleteWhisper(w.id);
+      });
+      const promoteBtn = card.querySelector('.promote-btn');
+      if (promoteBtn){
+        promoteBtn.addEventListener('click', ()=>{
+          alert('This is a draft tool — what happens when MQL criteria is marked as passed isn\'t wired up yet. Once the criteria are finalised, this can push straight into your MQL Criteria Checker.');
+        });
+      }
+
+      // --- Actions checklist ---
+      const todoWrap = document.createElement('div');
+      todoWrap.className = 'wc-todo';
+      const todoTitle = document.createElement('p');
+      todoTitle.className = 'wc-todo-title';
+      todoTitle.textContent = 'Actions';
+      todoWrap.appendChild(todoTitle);
+
+      const actions = Array.isArray(w.actions) ? w.actions : [];
+      actions.forEach(a=>{
+        const row = document.createElement('div');
+        row.className = 'wc-todo-item' + (a.done ? ' done' : '');
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.checked = !!a.done;
+        cb.addEventListener('change', async ()=>{
+          const updated = actions.map(x => x.id === a.id ? Object.assign({}, x, { done: cb.checked }) : x);
+          await saveWhisper(Object.assign({}, w, { actions: updated }));
+        });
+        const textSpan = document.createElement('span');
+        textSpan.className = 'todo-text';
+        textSpan.textContent = a.text;
+        const delBtn = document.createElement('button');
+        delBtn.className = 'todo-del';
+        delBtn.textContent = '×';
+        delBtn.addEventListener('click', async ()=>{
+          const updated = actions.filter(x => x.id !== a.id);
+          await saveWhisper(Object.assign({}, w, { actions: updated }));
+        });
+        row.appendChild(cb); row.appendChild(textSpan); row.appendChild(delBtn);
+        todoWrap.appendChild(row);
+      });
+
+      const addRow = document.createElement('div');
+      addRow.className = 'wc-todo-add';
+      const addInput = document.createElement('input');
+      addInput.type = 'text';
+      addInput.placeholder = 'Add an action…';
+      const addBtn = document.createElement('button');
+      addBtn.className = 'secondary';
+      addBtn.textContent = 'Add';
+      async function addAction(){
+        const text = addInput.value.trim();
+        if (!text) return;
+        const updated = actions.concat([{ id: uid(), text, done:false }]);
+        addInput.value = '';
+        await saveWhisper(Object.assign({}, w, { actions: updated }));
+      }
+      addBtn.addEventListener('click', addAction);
+      addInput.addEventListener('keydown', (e)=>{ if (e.key === 'Enter') addAction(); });
+      addRow.appendChild(addInput); addRow.appendChild(addBtn);
+      todoWrap.appendChild(addRow);
+
+      card.appendChild(todoWrap);
+
+      grid.appendChild(card);
+    });
+  }
+
+  const overlay = document.getElementById('overlay');
+  const modalBody = document.getElementById('modalBody');
+  function closeModal(){ overlay.classList.remove('open'); }
+  overlay.addEventListener('click', (e)=>{ if (e.target === overlay) closeModal(); });
+
+  function openModal(existing){
+    modalBody.innerHTML = `<h3>${existing ? 'Edit whisper' : 'New whisper'}</h3>`;
+    const inputs = {};
+    FIELDS.forEach(f=>{
+      const field = document.createElement('div');
+      field.className = 'field';
+      const label = document.createElement('label');
+      label.textContent = f.label;
+      field.appendChild(label);
+      let input;
+      if (f.type === 'select'){
+        input = document.createElement('select');
+        input.innerHTML = '<option value="">Select…</option>' + f.options.map(o=>`<option value="${o}">${o}</option>`).join('');
+      } else if (f.type === 'textarea'){
+        input = document.createElement('textarea');
+        if (f.placeholder) input.placeholder = f.placeholder;
+      } else if (f.type === 'date'){
+        input = document.createElement('input');
+        input.type = 'date';
+      } else if (f.type === 'currency'){
+        const prefixWrap = document.createElement('div');
+        prefixWrap.style.display = 'flex';
+        prefixWrap.style.alignItems = 'center';
+        prefixWrap.style.border = '1px solid var(--line)';
+        prefixWrap.style.borderRadius = '7px';
+        prefixWrap.style.overflow = 'hidden';
+        const prefixSpan = document.createElement('span');
+        prefixSpan.textContent = '£';
+        prefixSpan.style.padding = '0 0 0 11px';
+        prefixSpan.style.color = 'var(--ink-soft)';
+        prefixSpan.style.fontWeight = '600';
+        input = document.createElement('input');
+        input.type = 'number';
+        input.step = 'any';
+        input.min = '0';
+        input.style.border = 'none';
+        input.style.borderRadius = '0';
+        if (f.placeholder) input.placeholder = f.placeholder;
+        prefixWrap.appendChild(prefixSpan);
+        prefixWrap.appendChild(input);
+        if (existing && existing[f.key]) input.value = existing[f.key];
+        field.appendChild(prefixWrap);
+        modalBody.appendChild(field);
+        inputs[f.key] = input;
+        return;
+      } else {
+        input = document.createElement('input');
+        input.type = 'text';
+        if (f.placeholder) input.placeholder = f.placeholder;
+      }
+      if (existing && existing[f.key]) input.value = existing[f.key];
+      field.appendChild(input);
+      modalBody.appendChild(field);
+      inputs[f.key] = input;
+    });
+
+    const actions = document.createElement('div');
+    actions.className = 'modal-actions';
+    actions.innerHTML = `
+      <button class="secondary" id="delBtn" style="display:${existing ? 'inline-block' : 'none'}; color:var(--detractor); border-color:var(--detractor); background:transparent;">Delete</button>
+      <div style="flex:1"></div>
+      <button class="secondary" id="cancelBtn">Cancel</button>
+      <button id="saveBtn">Save</button>
+    `;
+    modalBody.appendChild(actions);
+
+    modalBody.querySelector('#cancelBtn').addEventListener('click', closeModal);
+    modalBody.querySelector('#delBtn').addEventListener('click', async ()=>{
+      if (existing) await deleteWhisper(existing.id);
+      closeModal();
+    });
+    modalBody.querySelector('#saveBtn').addEventListener('click', async ()=>{
+      const w = existing ? Object.assign({}, existing) : { id: uid() };
+      FIELDS.forEach(f=>{ w[f.key] = inputs[f.key].value.trim(); });
+      await saveWhisper(w);
+      closeModal();
+    });
+
+    overlay.classList.add('open');
+  }
+
+  document.getElementById('addBtn').addEventListener('click', ()=> openModal(null));
+
+  setStatus('Live — synced with your team.');
+})();
+</script>
+</body>
+</html>
