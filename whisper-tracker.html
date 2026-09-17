@@ -66,6 +66,16 @@
   .wc-todo-add input{ flex:1; padding:6px 8px; border:1px solid var(--line); border-radius:6px; font-size:12.5px; font-family:'IBM Plex Sans', sans-serif; }
   .wc-todo-add button{ padding:6px 10px; font-size:12px; }
 
+  .whisper-list{ display:flex; flex-direction:column; gap:8px; max-width:640px; }
+  .whisper-row{
+    display:flex; justify-content:space-between; align-items:center;
+    background:var(--panel); border:1px solid var(--line); border-left:5px solid var(--neutral-soft);
+    border-radius:10px; padding:14px 20px; cursor:pointer; transition:box-shadow .12s ease;
+  }
+  .whisper-row:hover{ box-shadow:var(--shadow); }
+  .whisper-row.verified{ border-left-color:var(--promoter); }
+  .wr-name{ font-family:'Newsreader', serif; font-style:italic; font-weight:600; font-size:16px; }
+
   .overlay{ position:fixed; inset:0; background:rgba(30,42,50,0.35); display:none; align-items:center; justify-content:center; z-index:100; padding:20px; }
   .overlay.open{ display:flex; }
   .modal{ background:var(--panel); border-radius:12px; padding:24px; width:420px; max-width:100%; max-height:88vh; overflow-y:auto; box-shadow:0 12px 40px rgba(0,0,0,0.2); }
@@ -84,6 +94,7 @@
   <p class="sub">Rumours and early signals, tracked until there's enough to call them a real MQL.</p>
   <p class="status-row" id="connStatus">Connecting…</p>
   <p class="error-row" id="errorBanner"></p>
+  <p class="status-row" id="whisperCount" style="font-weight:600;"></p>
 
 
   <div class="toolrow">
@@ -91,7 +102,7 @@
     <button id="addBtn">+ Add whisper</button>
   </div>
 
-  <div class="card-grid" id="cardGrid"></div>
+  <div id="cardGrid"></div>
 </div>
 
 <div class="overlay" id="overlay">
@@ -220,13 +231,53 @@
 
   const grid = document.getElementById('cardGrid');
 
+  let selectedWhisperId = null;
+
   function render(){
     grid.innerHTML = '';
+    const countEl = document.getElementById('whisperCount');
+    if (countEl) countEl.textContent = whispers.length + ' whisper' + (whispers.length === 1 ? '' : 's') + ' logged';
+
     if (!whispers.length){
       grid.innerHTML = '<p style="color:var(--ink-soft); font-size:13px;">No whispers logged yet — click "+ Add whisper" to start.</p>';
       return;
     }
-    whispers.forEach(w=>{
+
+    if (selectedWhisperId){
+      const w = whispers.find(x=>x.id===selectedWhisperId);
+      if (!w){ selectedWhisperId = null; render(); return; }
+      const backBtn = document.createElement('button');
+      backBtn.className = 'secondary small';
+      backBtn.textContent = '← Back to all whispers';
+      backBtn.style.marginBottom = '14px';
+      backBtn.addEventListener('click', ()=>{ selectedWhisperId = null; render(); });
+      grid.appendChild(backBtn);
+
+      const detailWrap = document.createElement('div');
+      detailWrap.style.maxWidth = '480px';
+      detailWrap.appendChild(buildWhisperCard(w));
+      grid.appendChild(detailWrap);
+      return;
+    }
+
+    const list = document.createElement('div');
+    list.className = 'whisper-list';
+    const sorted = whispers.slice().sort((a,b) => filledCount(b) - filledCount(a));
+    sorted.forEach(w=>{
+      const verified = isVerified(w);
+      const row = document.createElement('div');
+      row.className = 'whisper-row' + (verified ? ' verified' : '');
+      row.innerHTML = `
+        <span class="wr-name">${escapeHtml(w.company || 'Untitled')}</span>
+        <span class="badge ${verified ? 'verified' : 'pending'}">${verified ? 'Verified' : filledCount(w) + '/' + MANDATORY_FIELDS.length}</span>
+      `;
+      row.addEventListener('click', ()=>{ selectedWhisperId = w.id; render(); });
+      list.appendChild(row);
+    });
+    grid.appendChild(list);
+  }
+
+  function buildWhisperCard(w){
       const verified = isVerified(w);
       const card = document.createElement('div');
       card.className = 'whisper-card' + (verified ? ' verified' : '');
@@ -250,7 +301,7 @@
       const promoteBtn = card.querySelector('.promote-btn');
       if (promoteBtn){
         promoteBtn.addEventListener('click', ()=>{
-          alert('This is a draft tool — what happens when MQL criteria is marked as passed isn\'t wired up yet. Once the criteria are finalised, this can push straight into your MQL Criteria Checker.');
+          alert('MQL hand-off isn\'t wired up yet — for now, this just marks that criteria are met. Once you\'re ready, this can push straight into your MQL Criteria Checker.');
         });
       }
 
@@ -309,8 +360,7 @@
 
       card.appendChild(todoWrap);
 
-      grid.appendChild(card);
-    });
+      return card;
   }
 
   const overlay = document.getElementById('overlay');
@@ -320,6 +370,25 @@
 
   function openModal(existing){
     modalBody.innerHTML = `<h3>${existing ? 'Edit whisper' : 'New whisper'}</h3>`;
+
+    // --- Paste-to-populate extractor ---
+    const extractorWrap = document.createElement('div');
+    extractorWrap.style.background = 'var(--neutral-soft)';
+    extractorWrap.style.border = '1px solid var(--line)';
+    extractorWrap.style.borderRadius = '8px';
+    extractorWrap.style.padding = '12px';
+    extractorWrap.style.marginBottom = '16px';
+    extractorWrap.innerHTML = `
+      <p style="font-family:'Newsreader', serif; font-style:italic; font-weight:600; font-size:14px; margin:0 0 5px;">Fill this in from pasted notes</p>
+      <p style="font-size:11.5px; color:var(--ink-soft); margin:0 0 8px;">Paste anything — a call note, an email, a scribbled brief — and it'll fill in whatever fields it can find below.</p>
+      <textarea id="wExtractInput" placeholder="Paste notes here…" style="width:100%; min-height:70px; padding:7px 9px; border:1px solid var(--line); border-radius:6px; font-family:'IBM Plex Sans', sans-serif; font-size:12.5px; resize:vertical;"></textarea>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:7px;">
+        <button class="secondary small" id="wExtractBtn">Extract details</button>
+        <span id="wExtractStatus" style="font-size:11.5px; color:var(--ink-soft);"></span>
+      </div>
+    `;
+    modalBody.appendChild(extractorWrap);
+
     const inputs = {};
     FIELDS.forEach(f=>{
       const field = document.createElement('div');
@@ -372,6 +441,65 @@
       field.appendChild(input);
       modalBody.appendChild(field);
       inputs[f.key] = input;
+    });
+
+    // Wire up the extractor now that inputs exist
+    const extractBtn = extractorWrap.querySelector('#wExtractBtn');
+    const extractInput = extractorWrap.querySelector('#wExtractInput');
+    const extractStatus = extractorWrap.querySelector('#wExtractStatus');
+
+    extractBtn.addEventListener('click', async ()=>{
+      const pasted = extractInput.value.trim();
+      if (!pasted){ extractStatus.textContent = 'Paste some text first.'; return; }
+      extractBtn.disabled = true;
+      extractStatus.textContent = 'Reading…';
+
+      const fieldDescriptions = FIELDS.map(f=>{
+        if (f.type === 'select') return `"${f.key}" (${f.label}) — must be exactly one of: ${f.options.join(' / ')}, or empty string if not mentioned`;
+        if (f.type === 'date') return `"${f.key}" (${f.label}) — a date in YYYY-MM-DD format, or empty string if not mentioned`;
+        if (f.type === 'currency') return `"${f.key}" (${f.label}) — a plain number, no currency symbol or commas, or empty string if not mentioned`;
+        return `"${f.key}" (${f.label}) — free text, or empty string if not mentioned`;
+      }).join('\n');
+
+      const prompt = `Extract information from the text below into a single JSON object with exactly these keys:
+${fieldDescriptions}
+
+Only use information actually present in the text — never invent or guess a value. Respond with ONLY the JSON object — no markdown fences, no commentary.
+
+TEXT:
+"""${pasted}"""`;
+
+      try{
+        const response = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: "claude-sonnet-4-6",
+            max_tokens: 1000,
+            messages: [{ role: "user", content: prompt }]
+          })
+        });
+        const data = await response.json();
+        const textBlocks = (data.content || []).filter(b=>b.type==='text').map(b=>b.text).join('\n');
+        const cleaned = textBlocks.replace(/```json|```/g, '').trim();
+        const parsed = JSON.parse(cleaned);
+
+        let filledCountLocal = 0;
+        FIELDS.forEach(f=>{
+          let val = (parsed[f.key] || '').toString().trim();
+          if (!val) return;
+          if (f.type === 'select' && !f.options.includes(val)) return; // ignore invalid option values
+          if (f.type === 'date' && !/^\d{4}-\d{2}-\d{2}$/.test(val)) return; // ignore malformed dates
+          inputs[f.key].value = val;
+          filledCountLocal++;
+        });
+        extractStatus.textContent = filledCountLocal ? `Filled ${filledCountLocal} field${filledCountLocal===1?'':'s'} — review before saving.` : 'Nothing recognisable found in that text.';
+      }catch(e){
+        extractStatus.textContent = 'Could not extract details — try again.';
+        showError('Extraction failed: ' + e.message);
+      }finally{
+        extractBtn.disabled = false;
+      }
     });
 
     const actions = document.createElement('div');
