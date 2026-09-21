@@ -9,7 +9,7 @@
 <style>
   :root{
     --ink:#101820; --ink-soft:#5C636B; --paper:#FFFFFF; --panel:#FFFFFF; --line:#b2b2b3;
-    --gold:#573d82; --promoter:#5F8768; --promoter-soft:#E4EDE3; --neutral-soft:#EDEDEE;
+    --gold:#573d82; --review:#c76a2e; --review-soft:#FFF1E6; --promoter:#5F8768; --promoter-soft:#E4EDE3; --neutral-soft:#EDEDEE;
     --detractor:#eb6954; --shadow:0 2px 10px rgba(16,24,32,0.08);
   }
   *{box-sizing:border-box;}
@@ -38,6 +38,7 @@
     padding:22px; border-left:5px solid var(--neutral-soft);
   }
   .whisper-card.verified{ border-left:5px solid var(--promoter); }
+  .whisper-card.review{ border-left:5px solid var(--review); }
   .wc-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:12px; }
   .wc-name{ font-family:'Jost', sans-serif; font-weight:600; font-size:22px; margin:0; }
   .badge{
@@ -45,6 +46,7 @@
     letter-spacing:0.03em; padding:5px 11px; border-radius:12px; white-space:nowrap;
   }
   .badge.verified{ background:var(--promoter-soft); color:var(--promoter); }
+  .badge.review{ background:var(--review-soft); color:var(--review); }
   .badge.pending{ background:var(--neutral-soft); color:var(--ink-soft); }
   .wc-field{ margin:10px 0; }
   .wc-field .lbl{
@@ -75,6 +77,7 @@
   }
   .whisper-row:hover{ box-shadow:var(--shadow); }
   .whisper-row.verified{ border-left-color:var(--promoter); }
+  .whisper-row.review{ border-left-color:var(--review); }
   .wr-name{ font-family:'Jost', sans-serif; font-weight:600; font-size:16px; }
 
   .overlay{ position:fixed; inset:0; background:rgba(30,42,50,0.35); display:none; align-items:center; justify-content:center; z-index:100; padding:20px; }
@@ -223,6 +226,9 @@
       return true;
     });
   }
+  function isConfirmed(w){
+    return isVerified(w) && w.winnable === 'Yes';
+  }
   function filledCount(w){
     return MANDATORY_FIELDS.filter(f => (w[f.key] || '').toString().trim().length > 0).length;
   }
@@ -275,11 +281,16 @@
     const sorted = whispers.slice().sort((a,b) => filledCount(b) - filledCount(a));
     sorted.forEach(w=>{
       const verified = isVerified(w);
+      const confirmed = isConfirmed(w);
       const row = document.createElement('div');
-      row.className = 'whisper-row' + (verified ? ' verified' : '');
+      row.className = 'whisper-row' + (confirmed ? ' verified' : (verified ? ' review' : ''));
+      let badgeClass, badgeText;
+      if (confirmed){ badgeClass = 'verified'; badgeText = 'Verified'; }
+      else if (verified){ badgeClass = 'review'; badgeText = 'Needing review'; }
+      else { badgeClass = 'pending'; badgeText = filledCount(w) + '/' + MANDATORY_FIELDS.length; }
       row.innerHTML = `
         <span class="wr-name">${escapeHtml(w.company || 'Untitled')}</span>
-        <span class="badge ${verified ? 'verified' : 'pending'}">${verified ? 'Verified' : filledCount(w) + '/' + MANDATORY_FIELDS.length}</span>
+        <span class="badge ${badgeClass}">${badgeText}</span>
       `;
       row.addEventListener('click', ()=>{ selectedWhisperId = w.id; render(); });
       list.appendChild(row);
@@ -289,17 +300,24 @@
 
   function buildWhisperCard(w){
       const verified = isVerified(w);
+      const confirmed = isConfirmed(w);
       const card = document.createElement('div');
-      card.className = 'whisper-card' + (verified ? ' verified' : '');
+      card.className = 'whisper-card' + (confirmed ? ' verified' : (verified ? ' review' : ''));
+      let badgeClass, badgeText;
+      if (confirmed){ badgeClass = 'verified'; badgeText = 'Verified'; }
+      else if (verified){ badgeClass = 'review'; badgeText = 'Needing review'; }
+      else { badgeClass = 'pending'; badgeText = filledCount(w) + '/' + MANDATORY_FIELDS.length; }
       card.innerHTML = `
         <div class="wc-head">
           <p class="wc-name">${escapeHtml(w.company || 'Untitled')}</p>
-          <span class="badge ${verified ? 'verified' : 'pending'}">${verified ? 'Verified' : filledCount(w) + '/' + MANDATORY_FIELDS.length}</span>
+          <span class="badge ${badgeClass}">${badgeText}</span>
         </div>
         ${FIELDS.slice(1).map(f=> w[f.key] ? `<div class="wc-field"><span class="lbl">${escapeHtml(f.label)}</span><span class="val">${escapeHtml(formatDisplayValue(f, w[f.key]))}</span></div>` : '').join('')}
+        ${w.winnable ? `<div class="wc-field"><span class="lbl">Anchorpoint winnable?</span><span class="val">${escapeHtml(w.winnable)}</span></div>` : ''}
         ${!verified ? `<div class="wc-field" style="color:var(--detractor);"><span class="lbl" style="color:var(--detractor);">Still needed</span><ul style="margin:4px 0 0; padding-left:18px;">${missingOrFailingLabels(w).map(l=>`<li>${escapeHtml(l)}</li>`).join('')}</ul></div>` : ''}
+        ${verified && !confirmed ? `<div class="wc-field" style="color:var(--review);"><span class="lbl" style="color:var(--review);">Awaiting</span><span class="val">Team sign-off on whether this is an Anchorpoint winnable project.</span></div>` : ''}
         <div class="wc-actions">
-          ${verified ? '<button class="promote-btn small">MQL Criteria Passed</button>' : ''}
+          ${confirmed ? '<button class="promote-btn small">MQL Criteria Passed</button>' : ''}
           <button class="secondary small edit-btn">Edit</button>
           <button class="secondary small del-btn" style="color:var(--detractor); border-color:var(--detractor);">Remove</button>
         </div>
@@ -453,6 +471,22 @@
       inputs[f.key] = input;
     });
 
+    // --- Winnable sign-off: separate from the standard criteria fields ---
+    const winnableField = document.createElement('div');
+    winnableField.className = 'field';
+    winnableField.innerHTML = `
+      <label>Do the team think this is an Anchorpoint winnable project?</label>
+      <div style="display:flex; gap:18px; align-items:center; margin-top:4px;">
+        <label style="display:flex; align-items:center; gap:6px; font-weight:600; font-size:13.5px; cursor:pointer;">
+          <input type="radio" name="winnableRadio" value="Yes" ${existing && existing.winnable === 'Yes' ? 'checked' : ''} /> Yes
+        </label>
+        <label style="display:flex; align-items:center; gap:6px; font-weight:600; font-size:13.5px; cursor:pointer;">
+          <input type="radio" name="winnableRadio" value="No" ${existing && existing.winnable === 'No' ? 'checked' : ''} /> No
+        </label>
+      </div>
+    `;
+    modalBody.appendChild(winnableField);
+
     // Wire up the extractor now that inputs exist
     const extractBtn = extractorWrap.querySelector('#wExtractBtn');
     const extractInput = extractorWrap.querySelector('#wExtractInput');
@@ -530,6 +564,8 @@ TEXT:
     modalBody.querySelector('#saveBtn').addEventListener('click', async ()=>{
       const w = existing ? Object.assign({}, existing) : { id: uid() };
       FIELDS.forEach(f=>{ w[f.key] = inputs[f.key].value.trim(); });
+      const winnableChecked = modalBody.querySelector('input[name="winnableRadio"]:checked');
+      w.winnable = winnableChecked ? winnableChecked.value : '';
       await saveWhisper(w);
       closeModal();
     });
