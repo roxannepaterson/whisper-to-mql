@@ -215,6 +215,7 @@
   .field label{ display:block; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-soft); margin-bottom:5px; }
   .field input, .field textarea, .field select{ width:100%; padding:10px 11px; border:1px solid var(--line); border-radius:7px; font-size:14.5px; color:var(--ink); background:#fff; }
   .field textarea{ min-height:66px; resize:vertical; }
+  .field input[type=radio], .field input[type=checkbox]{ width:auto; padding:0; border:none; }
   #whisperModal .modal-actions{ display:flex; justify-content:space-between; margin-top:18px; gap:8px; }
 
   #pickModal{ padding:22px 24px; width:560px; max-height:86vh; display:flex; flex-direction:column; }
@@ -358,14 +359,12 @@
     { key:'amount', label:'Amount', short:'Amount', type:'currency', placeholder:'150000' },
     { key:'closeDate', label:'Close Date', short:'Close date', type:'date' },
     { key:'handoverDate', label:'Handover to SQL Date', short:'Handover to SQL date', type:'date' },
-    { key:'officeMove', label:'Is it a definite office move or refurbishment?', short:'Definite move/refurb', type:'select', options:['Yes','No','Unsure'], requiredValue:'Yes' },
     { key:'compellingEvent', label:'What is the compelling event?', short:'Compelling event', type:'textarea' },
     { key:'projectDriver', label:'Who is the primary project driver?', short:'Primary project driver', type:'text' },
     { key:'industry', label:'Industry', short:'Industry', type:'text' },
     { key:'turnover', label:'Annual Turnover', short:'Turnover', type:'text' },
     { key:'otherLocations', label:'Other UK Locations', short:'Other UK locations', type:'text' },
-    { key:'workedWithUs', label:'Has the client worked with Anchorpoint before?', short:'Worked with us before', type:'select', options:['Yes','No'] },
-    { key:'otherInfluencers', label:'Other Influencers', short:'Other influencers', type:'textarea', optional:true }
+    { key:'targetProfile', label:'Aligned with target profiles', short:'Target profile', type:'choice', options:['Tier 1','Tier 2','Other'] }
   ];
   const MANDATORY = FIELDS.filter(f => !f.optional);
 
@@ -436,6 +435,14 @@
   const createWhisper = (w)=> wRef.child(w.id).set(w).catch(fail('Save'));
   const updateWhisper = (id, fields)=> wRef.child(id).update(fields).catch(fail('Save'));
   const deleteWhisper = (id)=> wRef.child(id).remove().catch(fail('Delete'));
+  function deleteWarning(w){
+    const e = shortlist()[w.id];
+    const m = monthName(monthKey);
+    const name = w.company || 'this whisper';
+    if (e && e.banked) return 'Delete ' + name + '?\n\nIt is banked in the ' + m + ' push, so its value stays counted in that month\'s target.';
+    if (e) return 'Delete ' + name + '?\n\nIt is in the ' + m + ' push but has NOT been banked. Deleting it now will drop its value from the push and the target.\n\nIf it has become an MQL, press Cancel and use "Bank as MQL" first.';
+    return 'Remove ' + name + '?';
+  }
   const newEntry = (w)=> ({ confidence:'warm', oneThing:'', ideas:[], name: w.company || '', addedAt: todayISO() });
 
   // ---------- Tabs ----------
@@ -564,7 +571,10 @@
 
     if (it.gone){
       el.innerHTML = `<div class="card-head"><div><p class="c-name">${esc(entry.name || 'Removed whisper')}</p>
-        <div class="c-sub">This whisper has been deleted.${entry.banked ? ' Its banked value still counts.' : ''}</div></div></div>
+        <div class="c-sub">${entry.banked
+          ? 'This whisper has been deleted, but it was banked, so its value still counts toward the target.'
+          : 'This whisper was deleted before it was banked, so its value no longer counts. Remove this card, or add the whisper again.'}</div></div>
+        <div class="c-amount">${entry.banked ? money(it.amount) : '£—'}<small>${entry.banked ? 'banked ' + fmtDate(entry.banked.at) : 'not counted'}</small></div></div>
         <div class="card-foot"><span></span><button class="link-btn" data-act="drop">Remove from push</button></div>`;
       el.querySelector('[data-act=drop]').onclick = ()=> pushRemove('shortlist/' + id);
       return el;
@@ -800,7 +810,7 @@
       </div>`;
     const act = (a)=> card.querySelector('[data-act=' + a + ']');
     act('edit').onclick = ()=> openWhisperModal(w);
-    act('del').onclick = ()=>{ if (confirm('Remove this whisper?')) deleteWhisper(w.id); };
+    act('del').onclick = ()=>{ if (confirm(deleteWarning(w))) deleteWhisper(w.id); };
     if (act('addPush')) act('addPush').onclick = ()=> pushSave('shortlist/' + w.id, newEntry(w));
     if (act('viewPush')) act('viewPush').onclick = ()=> setTab('push');
 
@@ -866,6 +876,14 @@
         input.style.cssText = 'border:none; border-radius:0;';
         wrap.append(sym, input);
         field.appendChild(wrap);
+      } else if (f.type === 'choice'){
+        input = document.createElement('div');
+        input.style.cssText = 'display:flex; gap:18px; align-items:center; flex-wrap:wrap; margin-top:2px;';
+        input.innerHTML = f.options.map(o=> `<label style="display:flex; align-items:center; gap:6px; font-weight:600; font-size:13.5px; cursor:pointer; text-transform:none; letter-spacing:0; color:var(--ink); margin:0;"><input type="radio" name="choice_${f.key}" value="${esc(o)}"> ${esc(o)}</label>`).join('');
+        Object.defineProperty(input, 'value', {
+          get(){ const c = input.querySelector('input:checked'); return c ? c.value : ''; },
+          set(v){ input.querySelectorAll('input').forEach(r=>{ r.checked = (r.value === v); }); }
+        });
       } else {
         input = document.createElement('input'); input.type = 'text';
       }
@@ -901,7 +919,7 @@
 
     wModal.querySelector('#wCancel').onclick = closeWhisperModal;
     wModal.querySelector('#wDel').onclick = async ()=>{
-      if (existing && confirm('Delete this whisper?')){ await deleteWhisper(existing.id); closeWhisperModal(); }
+      if (existing && confirm(deleteWarning(existing))){ await deleteWhisper(existing.id); closeWhisperModal(); }
     };
     wModal.querySelector('#wSave').onclick = async ()=>{
       const name = inputs.company.value.trim();
