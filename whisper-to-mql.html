@@ -11,7 +11,7 @@
     --ink:#101820; --ink-soft:#5C636B; --paper:#FFFFFF; --panel:#FFFFFF; --line:#b2b2b3; --line-soft:#E2E2E4;
     --gold:#573d82; --gold-soft:#EEE9F5; --gold-mid:#9C86C2;
     --review:#c76a2e; --review-soft:#FFF1E6; --promoter:#5F8768; --promoter-soft:#E4EDE3; --neutral-soft:#EDEDEE;
-    --detractor:#eb6954; --shadow:0 2px 10px rgba(16,24,32,0.08);
+    --detractor:#eb6954; --late:#c2412d; --late-soft:#FDEAE6; --shadow:0 2px 10px rgba(16,24,32,0.08);
   }
   *{box-sizing:border-box;}
   body{ margin:0; background:var(--paper); color:var(--ink); font-family:'Jost', Arial, sans-serif; -webkit-font-smoothing:antialiased; }
@@ -157,25 +157,81 @@
 
   /* ---------- Whispers tab ---------- */
   .toolrow{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:4px; }
-  .whisper-list{ display:flex; flex-direction:column; gap:8px; max-width:760px; }
+  .wr-top{ display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin:0 0 12px; }
+  .wr-summary{ display:flex; gap:8px; flex-wrap:wrap; }
+  .chip{ font-size:12.5px; font-weight:600; padding:5px 11px; border-radius:12px; background:var(--neutral-soft); color:var(--ink-soft); }
+  .chip.late{ background:var(--late-soft); color:var(--late); }
+  .chip.today{ background:var(--review-soft); color:var(--review); }
+  .chip.ok{ background:var(--promoter-soft); color:var(--promoter); }
+  .sort-sel{ display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--ink-soft); }
+  .sort-sel select{ padding:6px 8px; border:1px solid var(--line); border-radius:7px; font-size:13px; background:#fff; color:var(--ink); }
+
+  .whisper-list{ display:flex; flex-direction:column; gap:8px; }
+  .wr-head, .whisper-row{ display:grid; grid-template-columns:minmax(150px,1.1fr) minmax(220px,2.2fr) 150px 135px 110px; gap:14px; align-items:center; }
+  .wr-head{ padding:0 20px 0 25px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; color:var(--ink-soft); }
   .whisper-row{
-    display:flex; justify-content:space-between; align-items:center; gap:12px;
     background:var(--panel); border:1px solid var(--line); border-left:5px solid var(--neutral-soft);
-    border-radius:10px; padding:14px 20px; cursor:pointer; transition:box-shadow .12s ease;
+    border-radius:10px; padding:12px 20px; transition:box-shadow .12s ease;
   }
   .whisper-row:hover{ box-shadow:var(--shadow); }
   .whisper-row.verified{ border-left-color:var(--promoter); }
   .whisper-row.review{ border-left-color:var(--review); }
-  .wr-name{ font-weight:600; font-size:16px; flex:1; min-width:0; }
+  .wr-name{ background:none; border:none; padding:0; text-align:left; font-weight:600; font-size:16px; color:var(--ink); cursor:pointer; }
+  .wr-name:hover{ text-decoration:underline; opacity:1; }
+  .wr-sub{ display:flex; gap:8px; align-items:center; margin-top:5px; flex-wrap:wrap; }
   .wr-amt{ font-size:13px; color:var(--ink-soft); font-weight:500; white-space:nowrap; }
-  .wr-right{ display:flex; align-items:center; gap:10px; flex-shrink:0; }
-  .badge{ font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:5px 11px; border-radius:12px; white-space:nowrap; }
+  .wr-cell input, .wr-cell select, .plan-cell input, .plan-cell select{ width:100%; padding:8px 9px; border:1px solid var(--line-soft); border-radius:7px; font-size:13.5px; background:#fff; color:var(--ink); }
+  .wr-cell input.needs, .plan-cell input.needs{ border-color:var(--review); background:var(--review-soft); }
+  .wr-cell input.late, .plan-cell input.late{ border-color:var(--late); color:var(--late); font-weight:600; background:var(--late-soft); }
+  .wr-cell input.today, .plan-cell input.today{ border-color:var(--review); color:var(--review); font-weight:600; background:var(--review-soft); }
+  .wr-status{ text-align:right; }
+  .wr-edit{ display:block; margin:6px 0 0 auto; background:none; border:none; padding:0; font-size:12px; font-weight:600; color:var(--gold); text-decoration:underline; cursor:pointer; }
+  .wr-edit:hover{ opacity:1; color:var(--ink); }
+  .whisper-row{ cursor:pointer; }
+  .whisper-row .wr-cell, .whisper-row .wr-cell *{ cursor:auto; }
+  @media (max-width:900px){
+    .wr-head{ display:none; }
+    .whisper-row{ grid-template-columns:1fr 1fr; }
+    .wr-main, .wr-cell[data-label="Next step"], .wr-status{ grid-column:1 / -1; }
+    .wr-status{ text-align:left; }
+    .wr-edit{ margin:6px 0 0 0; }
+    .wr-cell::before{ display:block; content:attr(data-label); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; color:var(--ink-soft); margin-bottom:3px; }
+  }
+
+  .crit{ margin:0 0 16px; border:1px solid var(--line-soft); border-radius:10px; overflow:hidden; }
+  .crit-head{ display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; padding:10px 14px; background:#FAFAFB; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; color:var(--ink-soft); }
+  .crit-count{ text-transform:none; letter-spacing:0; font-size:13px; color:var(--ink); }
+  .crit-bar{ height:4px; background:var(--neutral-soft); }
+  .crit-bar span{ display:block; height:100%; background:var(--promoter); }
+  .crit-row{ display:grid; grid-template-columns:20px minmax(130px,1fr) minmax(0,1.6fr) 56px; gap:10px; align-items:start; padding:9px 14px; border-top:1px solid var(--line-soft); font-size:14px; }
+  .crit-tick{ font-weight:700; }
+  .crit-row.done .crit-tick{ color:var(--promoter); }
+  .crit-row.todo{ background:var(--review-soft); }
+  .crit-row.todo .crit-tick{ color:var(--review); }
+  .crit-label{ color:var(--ink-soft); font-weight:600; font-size:13px; }
+  .crit-val{ color:var(--ink); line-height:1.4; word-break:break-word; }
+  .crit-row.todo .crit-val{ color:var(--review); font-weight:600; }
+  .crit-row.signoff{ border-top:2px solid var(--line-soft); }
+  .crit-fill{ background:none; border:none; padding:0; font-size:12px; font-weight:600; color:var(--gold); text-decoration:underline; cursor:pointer; text-align:right; }
+  .crit-fill:hover{ opacity:1; color:var(--ink); }
+  @media (max-width:640px){ .crit-row{ grid-template-columns:20px 1fr; } .crit-val, .crit-fill{ grid-column:2; text-align:left; } }
+  .plan-box{ display:grid; grid-template-columns:1fr 150px 140px; gap:12px; margin:0 0 16px; padding:14px; border:1px solid var(--line-soft); border-radius:10px; background:#FAFAFB; }
+  .plan-cell label{ display:block; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; color:var(--ink-soft); margin-bottom:4px; }
+  .plan-hint{ grid-column:1 / -1; font-size:12.5px; font-weight:600; }
+  .plan-hint.late{ color:var(--late); }
+  .plan-hint.today{ color:var(--review); }
+  @media (max-width:640px){ .plan-box{ grid-template-columns:1fr 1fr; } .plan-cell.plan-wide{ grid-column:1 / -1; } }
+  .next-line{ margin-top:12px; font-size:13px; color:var(--ink-soft); }
+  .next-line b{ color:var(--ink); font-weight:600; }
+  .next-line .late{ color:var(--late); font-weight:600; }
+  .next-line .today{ color:var(--review); font-weight:600; }
+  .badge{ font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:5px 11px; border-radius:12px; white-space:nowrap; display:inline-block; }
   .badge.verified{ background:var(--promoter-soft); color:var(--promoter); }
   .badge.review{ background:var(--review-soft); color:var(--review); }
   .badge.pending{ background:var(--neutral-soft); color:var(--ink-soft); }
   .pill{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:3px 9px; border-radius:10px; background:var(--gold-soft); color:var(--gold); white-space:nowrap; }
 
-  .whisper-card{ background:var(--panel); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow); padding:22px; border-left:5px solid var(--neutral-soft); max-width:640px; }
+  .whisper-card{ background:var(--panel); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow); padding:22px; border-left:5px solid var(--neutral-soft); max-width:760px; }
   .whisper-card.verified{ border-left-color:var(--promoter); }
   .whisper-card.review{ border-left-color:var(--review); }
   .wc-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:12px; }
@@ -234,7 +290,6 @@
   @media (max-width:640px){
     .page-header{ flex-direction:column-reverse; } .brand-logo{ height:28px; }
     .gap-num{ font-size:42px; }
-    .whisper-row{ flex-wrap:wrap; }
   }
   @media (prefers-reduced-motion: reduce){ .seg{ transition:none; } }
 </style>
@@ -294,7 +349,7 @@
       <h2>All whispers</h2>
       <button id="addWhisperBtn">+ Add whisper</button>
     </div>
-    <p class="section-sub">Every whisper, checked against the criteria. Once one is signed off, add it to this month's push.</p>
+    <p class="section-sub">Every whisper with its next step, a date to check it, and the month it's likely to become an MQL. Once one is signed off, add it to this month's push.</p>
     <div id="whisperArea"></div>
   </section>
 </div>
@@ -368,6 +423,21 @@
   ];
   const MANDATORY = FIELDS.filter(f => !f.optional);
 
+  // ---------- Planning: next step, check date, likely MQL month (not part of the criteria) ----------
+  function monthShortLabel(key){ const [y,m] = key.split('-').map(Number); return new Date(y, m-1, 1).toLocaleDateString('en-GB', { month:'short', year:'numeric' }); }
+  function monthSelectHTML(selected){
+    const base = new Date(); base.setDate(1);
+    const keys = [];
+    for (let i = 0; i <= 12; i++){ const d = new Date(base.getFullYear(), base.getMonth() + i, 1); keys.push(d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0')); }
+    if (selected && !keys.includes(selected)){ keys.push(selected); keys.sort(); }
+    return '<option value="">Not set</option>' + keys.map(k=> `<option value="${k}" ${k === selected ? 'selected' : ''}>${esc(monthShortLabel(k))}</option>`).join('');
+  }
+  function checkStatus(w){
+    if (!w.checkDate) return 'none';
+    const t = todayISO();
+    return w.checkDate < t ? 'late' : (w.checkDate === t ? 'today' : 'ok');
+  }
+
   function readiness(w){
     const st = MANDATORY.map(f=>{
       const v = (w[f.key] == null ? '' : String(w[f.key])).trim();
@@ -395,6 +465,7 @@
   let whispersLoaded = false, pushLoaded = false;
   let activeTab = (location.hash || '').replace('#','') === 'whispers' ? 'whispers' : 'push';
   let selectedWhisperId = null;
+  let listSort = 'progress';
   let pendingRender = false;
 
   function monthLabel(key){ const [y,m] = key.split('-').map(Number); return new Date(y, m-1, 1).toLocaleDateString('en-GB', { month:'long', year:'numeric' }); }
@@ -582,6 +653,10 @@
 
     const r = it.ready;
     const sub = [w.location, w.projectType, w.closeDate ? 'close ' + fmtDate(w.closeDate) : ''].filter(Boolean).join(' · ');
+    const cs = checkStatus(w);
+    const nextLine = (w.nextStep || w.checkDate || w.mqlMonth)
+      ? `<div class="next-line"><b>Next step:</b> ${esc(w.nextStep || 'not set')}${w.checkDate ? ` · check <span class="${cs === 'late' || cs === 'today' ? cs : ''}">${esc(fmtDate(w.checkDate))}${cs === 'late' ? ' (overdue)' : ''}</span>` : ''}${w.mqlMonth ? ` · likely MQL ${esc(monthShortLabel(w.mqlMonth))}` : ''}</div>`
+      : '';
     const dots = r.st.map(x=> `<span class="dot ${x.s === 'ok' ? 'ok' : x.s === 'fail' ? 'fail' : ''}" title="${esc(x.f.short)}${x.s === 'fail' ? ' (needs Yes)' : x.s === 'ok' ? ' ✓' : ' — missing'}"></span>`).join('')
       + `<span class="dot signoff ${r.signed ? 'ok' : ''}" title="Winnable sign-off${r.signed ? ' ✓' : ' — not yet'}"></span>`;
     let gapText;
@@ -614,6 +689,7 @@
       ${entry.banked ? '' : `<div class="conf" role="group" aria-label="Confidence">
         ${['hot','warm','punt'].map(c=> `<button data-conf="${c}" class="${c} ${conf === c ? 'on' : ''}">${c === 'punt' ? 'Long shot' : c[0].toUpperCase() + c.slice(1)}</button>`).join('')}
       </div>`}
+      ${nextLine}
       <div class="gap-row"><div class="dots" aria-hidden="true">${dots}</div>${gapText}</div>
       <div class="onething">
         <label>The one thing</label>
@@ -747,26 +823,119 @@
       area.appendChild(whisperCard(w));
       return;
     }
+    // summary line + sort
+    const nLate = list.filter(w=> checkStatus(w) === 'late').length;
+    const nToday = list.filter(w=> checkStatus(w) === 'today').length;
+    const nNoStep = list.filter(w=> !(w.nextStep || '').trim()).length;
+    const chips = [];
+    if (nLate) chips.push(`<span class="chip late">${nLate} check${nLate === 1 ? '' : 's'} overdue</span>`);
+    if (nToday) chips.push(`<span class="chip today">${nToday} due today</span>`);
+    if (nNoStep) chips.push(`<span class="chip">${nNoStep} without a next step</span>`);
+    if (!chips.length) chips.push(`<span class="chip ok">Every whisper has a next step and nothing is overdue</span>`);
+    const top = document.createElement('div');
+    top.className = 'wr-top';
+    top.innerHTML = `<div class="wr-summary">${chips.join('')}</div>
+      <label class="sort-sel">Sort by
+        <select id="sortSel">
+          <option value="progress">Progress</option>
+          <option value="check">Check date, soonest first</option>
+          <option value="month">Likely MQL month, soonest first</option>
+        </select>
+      </label>`;
+    top.querySelector('#sortSel').value = listSort;
+    top.querySelector('#sortSel').onchange = (e)=>{ listSort = e.target.value; renderWhispers(); };
+    area.appendChild(top);
+
+    const byProgress = (a,b)=> b.r.filled - a.r.filled || a.r.toGo - b.r.toGo || amountOf(b.w) - amountOf(a.w);
+    const sorters = {
+      progress: byProgress,
+      check: (a,b)=> (a.w.checkDate ? 0 : 1) - (b.w.checkDate ? 0 : 1) || (a.w.checkDate || '').localeCompare(b.w.checkDate || '') || byProgress(a,b),
+      month: (a,b)=> (a.w.mqlMonth ? 0 : 1) - (b.w.mqlMonth ? 0 : 1) || (a.w.mqlMonth || '').localeCompare(b.w.mqlMonth || '') || byProgress(a,b)
+    };
+
     const wrap = document.createElement('div');
     wrap.className = 'whisper-list';
+    wrap.innerHTML = `<div class="wr-head"><span>Whisper</span><span>Next step</span><span>Check on</span><span>Likely MQL</span><span style="text-align:right">Status</span></div>`;
     list.map(w=> ({ w, r: readiness(w) }))
-      .sort((a,b)=> b.r.filled - a.r.filled || a.r.toGo - b.r.toGo || amountOf(b.w) - amountOf(a.w))
+      .sort(sorters[listSort] || byProgress)
       .forEach(({ w, r })=>{
         const b = badgeFor(r);
         const row = document.createElement('div');
         row.className = 'whisper-row' + (r.ready ? ' verified' : (r.verified ? ' review' : ''));
         const amt = amountOf(w);
         row.innerHTML = `
-          <span class="wr-name">${esc(w.company || 'Untitled')}</span>
-          <span class="wr-right">
-            ${amt ? `<span class="wr-amt">${money(amt)}</span>` : ''}
-            ${shortlist()[w.id] ? `<span class="pill">In ${esc(monthName(monthKey))} push</span>` : ''}
-            <span class="badge ${b.cls}">${b.text}</span>
-          </span>`;
-        row.onclick = ()=>{ selectedWhisperId = w.id; renderWhispers(); };
+          <div class="wr-main">
+            <button class="wr-name" type="button">${esc(w.company || 'Untitled')}</button>
+            <div class="wr-sub">${amt ? `<span class="wr-amt">${money(amt)}</span>` : ''}${shortlist()[w.id] ? `<span class="pill">In ${esc(monthName(monthKey))} push</span>` : ''}</div>
+          </div>
+          <div class="wr-cell" data-label="Next step"><input type="text" class="wr-next ${(w.nextStep || '').trim() ? '' : 'needs'}" value="${esc(w.nextStep || '')}" placeholder="What needs to happen next?" aria-label="Next step for ${esc(w.company || 'this whisper')}"></div>
+          <div class="wr-cell" data-label="Check on"><input type="date" class="wr-check ${checkStatus(w)}" value="${esc(w.checkDate || '')}" aria-label="Date to check ${esc(w.company || 'this whisper')}"></div>
+          <div class="wr-cell" data-label="Likely MQL"><select class="wr-month" aria-label="Likely MQL month for ${esc(w.company || 'this whisper')}">${monthSelectHTML(w.mqlMonth || '')}</select></div>
+          <div class="wr-status"><span class="badge ${b.cls}">${b.text}</span><button class="wr-edit" type="button">Edit criteria</button></div>`;
+        row.querySelector('.wr-name').onclick = ()=>{ selectedWhisperId = w.id; renderWhispers(); };
+        row.querySelector('.wr-edit').onclick = ()=> openWhisperModal(w);
+        row.addEventListener('click', (e)=>{ if (e.target.closest('input, select, button, textarea, label')) return; selectedWhisperId = w.id; renderWhispers(); });
+        wirePlan(row, w);
         wrap.appendChild(row);
       });
     area.appendChild(wrap);
+  }
+
+  // Saves a planning field as soon as it's changed (writes only that one field)
+  function wirePlan(box, w){
+    const next = box.querySelector('.wr-next');
+    next.addEventListener('change', ()=> updateWhisper(w.id, { nextStep: next.value.trim() }));
+    next.addEventListener('keydown', e=>{ if (e.key === 'Enter') next.blur(); });
+    box.querySelector('.wr-check').addEventListener('change', e=> updateWhisper(w.id, { checkDate: e.target.value || '' }));
+    box.querySelector('.wr-month').addEventListener('change', e=> updateWhisper(w.id, { mqlMonth: e.target.value || '' }));
+  }
+
+  // Every criterion in order: the answer if there is one, otherwise a highlighted "still to fill in"
+  function criteriaBlock(w, r){
+    const done = r.st.filter(x=> x.s === 'ok').length;
+    const box = document.createElement('div');
+    box.className = 'crit';
+    const rows = r.st.map(x=>{
+      const f = x.f;
+      const raw = (w[f.key] == null ? '' : String(w[f.key])).trim();
+      const ok = x.s === 'ok';
+      const val = ok ? displayValue(f, raw) : (x.s === 'fail' ? displayValue(f, raw) + ' (needs ' + f.requiredValue + ')' : 'Still to fill in');
+      return `<div class="crit-row ${ok ? 'done' : 'todo'}" data-key="${f.key}">
+        <span class="crit-tick" aria-hidden="true">${ok ? '✓' : '○'}</span>
+        <span class="crit-label">${esc(f.label)}</span>
+        <span class="crit-val">${esc(val)}</span>
+        ${ok ? '<span></span>' : '<button class="crit-fill" type="button">Fill in</button>'}
+      </div>`;
+    }).join('');
+    const sv = w.winnable || '';
+    const signRow = `<div class="crit-row signoff ${sv === 'Yes' ? 'done' : 'todo'}" data-key="winnable">
+        <span class="crit-tick" aria-hidden="true">${sv === 'Yes' ? '✓' : '○'}</span>
+        <span class="crit-label">Team sign-off: is this an Anchorpoint winnable project?</span>
+        <span class="crit-val">${sv === 'Yes' ? 'Yes' : (sv === 'No' ? 'No (needs a Yes to count as Verified)' : 'Awaiting team sign-off')}</span>
+        ${sv === 'Yes' ? '<span></span>' : '<button class="crit-fill" type="button">Fill in</button>'}
+      </div>`;
+    const left = r.total - done;
+    box.innerHTML = `
+      <div class="crit-head"><span>Criteria</span><span class="crit-count">${done} of ${r.total} complete${left ? ' · ' + left + ' left to fill in' : ''}</span></div>
+      <div class="crit-bar"><span style="width:${Math.round(done / r.total * 100)}%"></span></div>
+      ${rows}${signRow}`;
+    box.querySelectorAll('.crit-fill').forEach(btn=>{
+      btn.onclick = ()=> openWhisperModal(w, { focus: btn.closest('.crit-row').dataset.key });
+    });
+    return box;
+  }
+
+  function planBlock(w){
+    const st = checkStatus(w);
+    const box = document.createElement('div');
+    box.className = 'plan-box';
+    box.innerHTML = `
+      <div class="plan-cell plan-wide"><label>Next step</label><input type="text" class="wr-next ${(w.nextStep || '').trim() ? '' : 'needs'}" value="${esc(w.nextStep || '')}" placeholder="What needs to happen next?"></div>
+      <div class="plan-cell"><label>Check on</label><input type="date" class="wr-check ${st}" value="${esc(w.checkDate || '')}"></div>
+      <div class="plan-cell"><label>Likely MQL month</label><select class="wr-month">${monthSelectHTML(w.mqlMonth || '')}</select></div>
+      ${st === 'late' ? `<div class="plan-hint late">This check is overdue. Has the next step been completed?</div>` : (st === 'today' ? `<div class="plan-hint today">Check this today.</div>` : '')}`;
+    wirePlan(box, w);
+    return box;
   }
 
   function stageStrip(w){
@@ -790,7 +959,6 @@
     const e = shortlist()[w.id];
     const card = document.createElement('div');
     card.className = 'whisper-card' + (r.ready ? ' verified' : (r.verified ? ' review' : ''));
-    const stillNeeded = r.missing.map(x=> x.f.label + (x.s === 'fail' ? ' (must be "' + x.f.requiredValue + '")' : ''));
     const mName = monthName(monthKey);
     card.innerHTML = `
       <div class="wc-head">
@@ -798,16 +966,14 @@
         <span class="badge ${b.cls}">${b.text}</span>
       </div>
       ${stageStrip(w)}
-      ${FIELDS.slice(1).map(f=> w[f.key] ? `<div class="wc-field"><span class="lbl">${esc(f.label)}</span><span class="val">${esc(displayValue(f, w[f.key]))}</span></div>` : '').join('')}
-      ${w.winnable ? `<div class="wc-field"><span class="lbl">Anchorpoint winnable?</span><span class="val">${esc(w.winnable)}</span></div>` : ''}
-      ${!r.verified ? `<div class="wc-field" style="color:var(--detractor);"><span class="lbl" style="color:var(--detractor);">Still needed</span><ul style="margin:4px 0 0; padding-left:18px;">${stillNeeded.map(l=>`<li>${esc(l)}</li>`).join('')}</ul></div>` : ''}
-      ${r.verified && !r.signed ? `<div class="wc-field" style="color:var(--review);"><span class="lbl" style="color:var(--review);">Awaiting</span><span class="val">Team sign-off on whether this is an Anchorpoint winnable project. Open Edit and answer the winnable question.</span></div>` : ''}
       <div class="wc-actions">
         ${e ? `<button class="secondary small" data-act="viewPush">${e.banked ? 'Banked in ' + esc(mName) : 'In ' + esc(mName) + ' push'} ✓ — view</button>`
             : `<button class="${r.ready ? 'promote-btn' : 'secondary'} small" data-act="addPush">Add to ${esc(mName)} push</button>`}
         <button class="secondary small" data-act="edit">Edit</button>
         <button class="secondary small" data-act="del" style="color:var(--detractor); border-color:var(--detractor);">Remove</button>
       </div>`;
+    card.querySelector('.stages').insertAdjacentElement('afterend', planBlock(w));
+    card.querySelector('.plan-box').insertAdjacentElement('afterend', criteriaBlock(w, r));
     const act = (a)=> card.querySelector('[data-act=' + a + ']');
     act('edit').onclick = ()=> openWhisperModal(w);
     act('del').onclick = ()=>{ if (confirm(deleteWarning(w))) deleteWhisper(w.id); };
@@ -908,6 +1074,18 @@
       </div>`;
     wModal.appendChild(win);
 
+    const plan = document.createElement('div');
+    plan.className = 'field';
+    plan.innerHTML = `
+      <label>Next step</label>
+      <input type="text" id="wNext" placeholder="What needs to happen next?">
+      <div style="display:flex; gap:12px; margin-top:10px;">
+        <div style="flex:1"><label>Check on</label><input type="date" id="wCheck"></div>
+        <div style="flex:1"><label>Likely MQL month</label><select id="wMonth">${monthSelectHTML(existing && existing.mqlMonth || '')}</select></div>
+      </div>`;
+    wModal.appendChild(plan);
+    if (existing){ wModal.querySelector('#wNext').value = existing.nextStep || ''; wModal.querySelector('#wCheck').value = existing.checkDate || ''; }
+
     const actions = document.createElement('div');
     actions.className = 'modal-actions';
     actions.innerHTML = `
@@ -928,6 +1106,9 @@
       FIELDS.forEach(f=>{ fields[f.key] = inputs[f.key].value.trim(); });
       const chosen = wModal.querySelector('input[name="winnableRadio"]:checked');
       fields.winnable = chosen ? chosen.value : '';
+      fields.nextStep = wModal.querySelector('#wNext').value.trim();
+      fields.checkDate = wModal.querySelector('#wCheck').value;
+      fields.mqlMonth = wModal.querySelector('#wMonth').value;
       if (existing){
         await updateWhisper(existing.id, fields);
       } else {
@@ -938,7 +1119,10 @@
       closeWhisperModal();
     };
     wOverlay.classList.add('open');
-    inputs.company.focus();
+    let focusEl = inputs.company;
+    if (opts.focus === 'winnable') focusEl = wModal.querySelector('input[name="winnableRadio"]');
+    else if (opts.focus && inputs[opts.focus]) focusEl = inputs[opts.focus].querySelector ? (inputs[opts.focus].querySelector('input') || inputs[opts.focus]) : inputs[opts.focus];
+    if (focusEl){ focusEl.focus(); if (focusEl.scrollIntoView) focusEl.scrollIntoView({ block:'center' }); }
   }
   $('addWhisperBtn').onclick = ()=> openWhisperModal(null);
 
@@ -950,11 +1134,11 @@
   function openPicker(){
     const inPush = shortlist();
     const avail = Object.keys(whispers).filter(id=> !inPush[id]).map(id=> ({ id, w: whispers[id], r: readiness(whispers[id]), amt: amountOf(whispers[id]) }))
-      .sort((a,b)=> a.r.toGo - b.r.toGo || b.amt - a.amt);
+      .sort((a,b)=> ((b.w.mqlMonth === monthKey) ? 1 : 0) - ((a.w.mqlMonth === monthKey) ? 1 : 0) || a.r.toGo - b.r.toGo || b.amt - a.amt);
     const chosen = new Set();
     pModal.innerHTML = `
       <h3>Add whispers to the push</h3>
-      <p class="m-hint">Closest to MQL first. Adding a whisper here doesn't change the whisper itself.</p>
+      <p class="m-hint">Whispers marked as likely to become an MQL this month come first, then the closest to MQL. Adding a whisper here doesn't change the whisper itself.</p>
       <input class="search" type="search" placeholder="Search whispers">
       <div class="pick-list"></div>
       <div class="modal-actions">
@@ -970,7 +1154,7 @@
       listEl.innerHTML = rows.map(a=> `
         <label class="pick">
           <input type="checkbox" value="${esc(a.id)}" ${chosen.has(a.id) ? 'checked' : ''}>
-          <span class="p-name">${esc(a.w.company || 'Untitled')}<small>${esc([a.w.location, a.r.ready ? 'ready to bank' : a.r.toGo + ' to go'].filter(Boolean).join(' · '))}</small></span>
+          <span class="p-name">${esc(a.w.company || 'Untitled')}<small>${esc([a.w.location, a.r.ready ? 'ready to bank' : a.r.toGo + ' to go', a.w.mqlMonth ? 'likely ' + monthShortLabel(a.w.mqlMonth) : ''].filter(Boolean).join(' · '))}</small></span>
           <span class="p-amt">${a.amt ? money(a.amt) : '£—'}</span>
         </label>`).join('') || '<p class="m-hint" style="padding:14px 4px">No matches.</p>';
       listEl.querySelectorAll('input').forEach(cb=> cb.onchange = ()=>{
