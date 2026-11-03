@@ -498,6 +498,8 @@ function showView(v){
 /* ---------- MQL push (live from the push board in Firebase) ---------- */
 let mqlMoves = [];
 let mqlRef = null, mqlPushData = null, mqlMonth = null;
+let mqlWRef = null, mqlWhispers = {};
+function mqlTodayISO(){ const d = new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function mqlMonthKey(){ const d = new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
 function mqlMoney(n){ n=Number(n)||0; if(n>=1e6) return '£'+(n/1e6).toFixed(1).replace(/\.0$/,'')+'M'; if(n>=1e3) return '£'+Math.round(n/1e3)+'k'; return '£'+Math.round(n); }
 const mqlArr = v => Array.isArray(v) ? v.filter(Boolean) : (v ? Object.values(v) : []);
@@ -508,13 +510,27 @@ function mqlCollect(){
   const out = [];
   Object.entries(d.shortlist||{}).forEach(([wid, e])=>{
     if(!e || e.banked) return;
-    mqlArr(e.ideas).forEach(i=>{ if(i.date && !i.done) out.push({kind:'card', wid, id:i.id, text:i.text, date:i.date, co:e.name||'Whisper'}); });
+    const w = mqlWhispers[wid];
+    const name = (w && w.company) || e.name || 'Whisper';
+    // Actions now live on the whisper (Whisper to MQL tool); older boards kept them on the push card
+    if(w) mqlArr(w.actions).forEach(a=>{ if(a.date && !a.done) out.push({kind:'action', wid, id:a.id, text:a.text, date:a.date, co: name + (a.owner ? ' · ' + a.owner : '')}); });
+    mqlArr(e.ideas).forEach(i=>{ if(i.date && !i.done) out.push({kind:'card', wid, id:i.id, text:i.text, date:i.date, co:name}); });
   });
   mqlArr(d.loose).forEach(i=>{ if(i.date && !i.done) out.push({kind:'loose', id:i.id, text:i.text, date:i.date, co:'Loose idea'}); });
   return out.sort((a,b)=> a.date<b.date?-1:a.date>b.date?1:0);
 }
 
 function mqlTick(m){
+  if(m.kind==='action'){
+    const wRef = mqlWRef.child(m.wid);
+    wRef.child('actions').transaction(list=>{
+      if(!list) return list;
+      const arr = Array.isArray(list) ? list : Object.values(list);
+      return arr.map(a=> a && a.id===m.id ? Object.assign({}, a, {done:true, doneAt: mqlTodayISO()}) : a);
+    }).then(()=> wRef.child('log').push({ at: mqlTodayISO(), text: 'Done: “' + m.text + '” (ticked in planner)' }))
+      .catch(e=> mqlMessage('Could not tick that off: '+e.message));
+    return;
+  }
   const path = m.kind==='loose' ? 'loose' : 'shortlist/'+m.wid+'/ideas';
   mqlRef.child(path).transaction(list=>{
     if(!list) return list;
@@ -559,7 +575,7 @@ function renderMql(){
   const later = mqlMoves.filter(m=>daysUntil(m.date)>7).length;
   if(!shown){
     const e = document.createElement('div'); e.className='empty';
-    e.textContent = 'No MQL moves due this week. Give ideas a date on the push board to see them here.';
+    e.textContent = 'No MQL actions due this week. Give actions on this month\'s push a due date to see them here.';
     body.appendChild(e);
   }
   if(later){ const e = document.createElement('div'); e.className='hint'; e.textContent = later+' more later this month.'; body.appendChild(e); }
@@ -593,7 +609,14 @@ function mqlBindMonth(db){
     });
     const db = firebase.database();
     firebase.auth().onAuthStateChanged(user=>{
-      if(user){ mqlBindMonth(db); }
+      if(user){
+        if(!mqlWRef){
+          mqlWRef = db.ref('whisperTracker');
+          mqlWRef.on('value', snap=>{ mqlWhispers = snap.val() || {}; mqlMoves = mqlCollect(); renderMql(); renderSide(); },
+            err=> mqlMessage('Could not load whisper actions: '+err.message));
+        }
+        mqlBindMonth(db);
+      }
       else firebase.auth().signInAnonymously().catch(e=> mqlMessage('Could not connect to the push board: '+e.message));
     });
     document.addEventListener('visibilitychange', ()=>{ if(!document.hidden && mqlRef) mqlBindMonth(db); });
