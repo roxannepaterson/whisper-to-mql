@@ -292,6 +292,147 @@
     .gap-num{ font-size:42px; }
   }
   @media (prefers-reduced-motion: reduce){ .seg{ transition:none; } }
+  /* ---------- Ownership & follow-through ---------- */
+  .card-meta{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-top:12px; }
+  .card-meta .conf{ margin-top:0; }
+  .owner{ display:inline-flex; align-items:center; gap:7px; font-size:12px; font-weight:600; color:var(--ink-soft); }
+  .owner select{ padding:5px 8px; border:1px solid var(--line-soft); border-radius:7px; font-size:13px; font-weight:600; background:#fff; color:var(--ink); }
+  .owner select.unset{ border-color:var(--review); background:var(--review-soft); color:var(--review); }
+  .flags{ margin-top:12px; display:flex; flex-direction:column; gap:5px; }
+  .flag{ font-size:12.5px; font-weight:600; padding:6px 10px; border-radius:7px; line-height:1.4; }
+  .flag.warn{ background:var(--review-soft); color:var(--review); }
+  .flag.late{ background:var(--late-soft); color:var(--late); }
+  .idea{ flex-wrap:wrap; }
+  .idea .txt{ flex:1 1 180px; }
+  .idea .who, .add-row select{ border:1px solid transparent; background:transparent; font-size:12px; font-weight:600; color:var(--ink); padding:2px 4px; border-radius:5px; max-width:110px; }
+  .idea .who:hover, .idea .who:focus{ border-color:var(--line-soft); }
+  .idea .who.unset{ color:var(--review); }
+  .idea.done .who{ color:var(--ink-soft); font-weight:500; }
+  .slip{ display:inline-block; font-size:10.5px; font-weight:700; padding:1px 7px; border-radius:9px; background:var(--review-soft); color:var(--review); margin-left:4px; vertical-align:1px; }
+  .slip.bad{ background:var(--late-soft); color:var(--late); }
+  .add-row{ flex-wrap:wrap; }
+  .add-row select, .add-row input[type=date]{ border:1px solid var(--line-soft); padding:6px 7px; font-size:12.5px; border-radius:7px; background:#fff; }
+  .add-row input[type=date]{ flex:0 0 auto; width:136px; color:var(--ink-soft); }
+  .history{ margin-top:12px; border-top:1px solid var(--line-soft); padding-top:8px; font-size:12.5px; }
+  .history summary{ cursor:pointer; font-size:12px; font-weight:600; color:var(--ink-soft); }
+  .history summary:hover{ color:var(--ink); }
+  .h-row{ display:flex; gap:10px; padding:4px 0; border-bottom:1px solid var(--neutral-soft); line-height:1.4; }
+  .h-row:last-child{ border-bottom:none; }
+  .h-row .h-at{ flex:0 0 52px; color:var(--ink-soft); font-size:11.5px; padding-top:1px; }
+  .h-list{ margin-top:6px; max-height:220px; overflow-y:auto; }
+  .moves-tools{ display:flex; justify-content:space-between; align-items:center; gap:8px; margin:0 0 6px; }
+  .moves-tools select{ padding:5px 8px; border:1px solid var(--line-soft); border-radius:7px; font-size:12.5px; background:#fff; color:var(--ink); }
+  .moves-sum{ font-size:12.5px; color:var(--ink-soft); margin:6px 0 0; line-height:1.5; }
+  .moves-sum b{ color:var(--ink); }
+  .moves-sum .warn{ color:var(--review); font-weight:600; display:block; }
+  .move.done .m-body{ color:var(--ink-soft); }
+  @media (max-width:640px){ .add-row .new-text{ flex-basis:100%; } }
+  .move .m-tick{ color:var(--promoter); font-weight:700; width:13px; text-align:center; }
+  /* ---------- Clearer layout (v3) ---------- */
+  .tab-count.late{ background:var(--late-soft); color:var(--late); }
+  .tab-btn.active .tab-count.late{ background:var(--late-soft); color:var(--late); }
+  .section-sub{ max-width:72ch; }
+  .cards{ display:grid; grid-template-columns:repeat(auto-fill, minmax(min(100%, 520px), 1fr)); gap:18px; align-items:start; }
+  .card{ padding:18px 20px 14px; }
+  .card-head{ padding-bottom:12px; border-bottom:1px solid var(--line-soft); }
+  .c-title{ min-width:0; }
+  button.c-name{ background:none; border:none; padding:0; color:var(--ink); text-align:left; font-size:21px; font-weight:600; border-radius:4px; }
+  button.c-name:hover{ text-decoration:underline; opacity:1; }
+  .card-meta{ justify-content:space-between; }
+  .crit-strip{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:14px; }
+  .crit-sum{ font-size:13px; color:var(--ink-soft); }
+  .crit-sum b{ color:var(--ink); }
+  .crit-sum.done{ color:var(--promoter); font-weight:600; }
+  .crit-missing{ font-size:12px; color:var(--ink-soft); margin-top:5px; line-height:1.45; }
+  .onething{ margin-top:14px; }
+
+  /* Actions block (cards and whisper page) */
+  .acts{ margin-top:16px; border:1px solid var(--line-soft); border-radius:10px; padding:10px 12px 8px; background:#FCFCFD; }
+  .acts-head{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin:0 0 4px; }
+  .acts-head h4{ margin:0; font-size:14px; font-weight:600; }
+  .acts-count{ font-size:12px; color:var(--ink-soft); }
+  .acts-empty{ font-size:12.5px; color:var(--ink-soft); margin:4px 0; }
+  .act{ display:grid; grid-template-columns:18px minmax(0,1fr) 104px 132px 20px; gap:8px; align-items:center; padding:7px 0; border-bottom:1px solid var(--neutral-soft); font-size:13.5px; }
+  .act:last-of-type{ border-bottom:none; }
+  .act-body{ min-width:0; line-height:1.35; }
+  .act-text{ word-break:break-word; }
+  .act.done .act-text{ text-decoration:line-through; color:var(--ink-soft); }
+  .act-co{ display:flex; align-items:center; gap:6px; margin-bottom:1px; }
+  .act-link{ background:none; border:none; padding:0; font-size:12px; font-weight:600; color:var(--gold); }
+  .act-link:hover{ text-decoration:underline; opacity:1; }
+  .act-who, .act-date{ width:100%; border:1px solid transparent; background:transparent; font-size:12.5px; padding:3px 4px; border-radius:6px; color:var(--ink); font-weight:600; }
+  .act-who:hover, .act-who:focus, .act-date:hover, .act-date:focus{ border-color:var(--line-soft); background:#fff; }
+  .act-who.unset{ color:var(--review); }
+  .act-date{ color:var(--ink-soft); font-weight:500; }
+  .act-date.set{ color:var(--ink); font-weight:600; }
+  .act-date.late{ color:var(--late); }
+  .act.late{ background:linear-gradient(90deg, var(--late-soft), transparent 60%); }
+  .act.done .act-who, .act.done .act-date{ color:var(--ink-soft); font-weight:500; }
+  .act-add{ display:grid; grid-template-columns:minmax(0,1fr) 104px 132px auto; gap:6px; margin-top:8px; }
+  .act-add input, .act-add select{ padding:7px 8px; border:1px solid var(--line-soft); border-radius:7px; font-size:13px; background:#fff; min-width:0; color:var(--ink); }
+  .acts-foot{ display:flex; gap:16px; margin-top:8px; }
+  .acts-done{ margin-top:6px; padding-top:4px; border-top:1px dashed var(--line-soft); }
+  .h-list{ margin-top:8px; max-height:240px; overflow-y:auto; border-top:1px solid var(--line-soft); padding-top:4px; font-size:12.5px; }
+  @media (max-width:640px){
+    .act{ grid-template-columns:18px minmax(0,1fr) 20px; grid-template-areas:"cb body x" ". who date"; }
+    .act-cb{ grid-area:cb; } .act-body{ grid-area:body; } .act .x{ grid-area:x; }
+    .act-who{ grid-area:who; } .act-date{ grid-area:date; }
+    .act{ grid-template-columns:18px 1fr 1fr 20px; grid-template-areas:"cb body body x" ". who date ."; }
+    .act-add{ grid-template-columns:1fr 1fr; }
+    .act-add .aa-text{ grid-column:1 / -1; }
+    .act-add button{ grid-column:1 / -1; }
+  }
+
+  /* Team actions tab */
+  .act-tools{ display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin:0 0 12px; }
+  .tgroup{ display:inline-flex; flex-wrap:wrap; border:1px solid var(--line-soft); border-radius:8px; overflow:hidden; }
+  .tgroup button{ border:none; border-radius:0; background:#fff; color:var(--ink-soft); padding:7px 13px; font-size:13px; font-weight:500; }
+  .tgroup button + button{ border-left:1px solid var(--line-soft); }
+  .tgroup button.on{ background:var(--ink); color:#fff; font-weight:600; }
+  .quick-add{ display:grid; grid-template-columns:minmax(140px,1fr) minmax(160px,1.6fr) 110px 140px auto; gap:8px; padding:12px; border:1px solid var(--line-soft); border-radius:10px; background:var(--gold-soft); margin-bottom:18px; }
+  .quick-add input, .quick-add select{ padding:8px 9px; border:1px solid var(--line-soft); border-radius:7px; font-size:13.5px; background:#fff; min-width:0; color:var(--ink); }
+  .quick-add select.needs{ border-color:var(--review); background:var(--review-soft); }
+  @media (max-width:760px){ .quick-add{ grid-template-columns:1fr 1fr; } .quick-add .qa-w, .quick-add .qa-text, .quick-add button{ grid-column:1 / -1; } }
+  .act-group{ margin-bottom:18px; border:1px solid var(--line-soft); border-radius:10px; padding:4px 14px 6px; }
+  .ag-head{ display:flex; justify-content:space-between; align-items:center; padding:8px 0 6px; font-size:13px; font-weight:600; border-bottom:1px solid var(--line-soft); }
+  .ag-n{ font-size:12px; padding:1px 8px; border-radius:10px; background:var(--neutral-soft); color:var(--ink-soft); }
+  .act-group.late{ border-color:#F3C4BB; }
+  .act-group.late .ag-head{ color:var(--late); }
+  .act-group.late .ag-n{ background:var(--late-soft); color:var(--late); }
+  .act-group.warn .ag-head{ color:var(--review); }
+  .act-group.done .ag-head{ color:var(--promoter); }
+  .act-group .act.late{ background:none; }
+  .bp-head, .bp-row{ display:grid; grid-template-columns:minmax(0,1fr) 46px 58px 58px; gap:6px; align-items:center; text-align:right; }
+  .bp-head{ font-size:11px; color:var(--ink-soft); padding:0 8px 4px; }
+  .bp-row{ width:100%; background:none; border:none; border-radius:7px; color:var(--ink); font-weight:500; font-size:13.5px; padding:7px 8px; }
+  .bp-row:hover{ background:var(--gold-soft); opacity:1; }
+  .bp-row.on{ background:var(--ink); color:#fff; }
+  .bp-name{ text-align:left; font-weight:600; }
+  .bp-late{ color:var(--late); font-weight:700; }
+  .bp-row.on .bp-late{ color:#FFB4A6; }
+  .bp-edit{ margin-top:8px; }
+  .na-row{ display:flex; justify-content:space-between; align-items:center; gap:8px; width:100%; background:none; border:none; border-bottom:1px solid var(--neutral-soft); border-radius:0; color:var(--ink); font-weight:600; font-size:13.5px; padding:7px 2px; text-align:left; }
+  .na-row:hover{ color:var(--gold); opacity:1; }
+
+  /* All whispers list */
+  .wr-filters{ display:flex; gap:14px; flex-wrap:wrap; }
+  .wr-head, .whisper-row{ grid-template-columns:minmax(150px,1.1fr) 130px minmax(220px,2.2fr) 135px 100px; }
+  .wr-owner.unset{ border-color:var(--review) !important; background:var(--review-soft) !important; color:var(--review) !important; }
+  .na{ display:flex; flex-direction:column; gap:1px; line-height:1.35; }
+  .na-text{ font-size:13.5px; color:var(--ink); }
+  .na-meta{ font-size:12px; color:var(--ink-soft); }
+  .na.late .na-meta{ color:var(--late); font-weight:600; }
+  .na.none{ font-size:12.5px; font-weight:600; color:var(--review); }
+  @media (max-width:900px){ .wr-cell[data-label="Next action"]{ grid-column:1 / -1; } }
+
+  /* Whisper page */
+  .back-btn{ margin-bottom:14px; }
+  .whisper-card{ max-width:880px; }
+  .wc-meta{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; padding:12px 0; border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft); }
+  .wc-meta select{ padding:5px 8px; border:1px solid var(--line-soft); border-radius:7px; font-size:13px; font-weight:600; background:#fff; color:var(--ink); }
+  .wc-buttons{ display:flex; gap:8px; flex-wrap:wrap; margin-left:auto; }
+  .wc-gap{ height:18px; }
+  .wr-filters select{ width:auto; }
 </style>
 </head>
 <body>
@@ -316,28 +457,41 @@
 
   <nav class="tabs" role="tablist" aria-label="Views">
     <button class="tab-btn" id="tabPush" role="tab">This month's push<span class="tab-count" id="pushCount">0</span></button>
+    <button class="tab-btn" id="tabActions" role="tab">Team actions<span class="tab-count" id="actCount">0</span></button>
     <button class="tab-btn" id="tabWhispers" role="tab">All whispers<span class="tab-count" id="whisperCount">0</span></button>
   </nav>
 
   <section id="viewPush">
+    <div class="section-head">
+      <h2>In the push</h2>
+      <button id="addToPushBtn">+ Add whispers</button>
+    </div>
+    <p class="section-sub">The whispers we're pushing to MQL this month, closest to MQL first. Each one needs an owner and an agreed next action.</p>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <section id="viewActions" class="hidden">
     <div class="layout">
       <main>
-        <div class="section-head">
-          <h2>In the push</h2>
-          <button id="addToPushBtn">+ Add whispers</button>
-        </div>
-        <p class="section-sub">The whispers we're pushing to MQL this month, closest to MQL first.</p>
-        <div class="cards" id="cards"></div>
+        <div class="section-head"><h2>Team actions</h2></div>
+        <p class="section-sub">Every open action across the whispers, soonest first. At the weekly check, tick off what's done, then move or reassign the rest.</p>
+        <div id="actTools"></div>
+        <div id="actList"></div>
       </main>
       <aside class="side">
         <div class="panel">
-          <h3>Moves</h3>
-          <p class="p-sub">Every dated idea across the push, soonest first. Give an idea a date on its card to put it here.</p>
-          <div id="moves"></div>
+          <h3>By person</h3>
+          <p class="p-sub">Tap a name to see just their actions.</p>
+          <div id="byPerson"></div>
+        </div>
+        <div class="panel">
+          <h3>No agreed action</h3>
+          <p class="p-sub">Whispers without an open action that has an owner and a due date.</p>
+          <div id="noAct"></div>
         </div>
         <div class="panel loose">
           <h3>Loose ideas</h3>
-          <p class="p-sub">Thoughts not tied to a whisper yet.</p>
+          <p class="p-sub" id="looseSub">Thoughts not tied to a whisper yet.</p>
           <div id="loose"></div>
         </div>
       </aside>
@@ -349,7 +503,7 @@
       <h2>All whispers</h2>
       <button id="addWhisperBtn">+ Add whisper</button>
     </div>
-    <p class="section-sub">Every whisper with its next step, a date to check it, and the month it's likely to become an MQL. Once one is signed off, add it to this month's push.</p>
+    <p class="section-sub">Every whisper with its owner, next action and the month it's likely to become an MQL. Open one to see its actions and criteria.</p>
     <div id="whisperArea"></div>
   </section>
 </div>
@@ -463,10 +617,13 @@
   let push = {};                // current month's board
   let pushRef = null;
   let whispersLoaded = false, pushLoaded = false;
-  let activeTab = (location.hash || '').replace('#','') === 'whispers' ? 'whispers' : 'push';
+  let activeTab = ['push','actions','whispers'].includes((location.hash || '').replace('#','')) ? (location.hash || '').replace('#','') : 'push';
   let selectedWhisperId = null;
   let listSort = 'progress';
   let pendingRender = false;
+  const DEFAULT_TEAM = ['Roxanne', 'Alison', 'Lyndon', 'Michael'];
+  let team = DEFAULT_TEAM.slice();
+  let listOwner = 'all';
 
   function monthLabel(key){ const [y,m] = key.split('-').map(Number); return new Date(y, m-1, 1).toLocaleDateString('en-GB', { month:'long', year:'numeric' }); }
   function monthName(key){ const [y,m] = key.split('-').map(Number); return new Date(y, m-1, 1).toLocaleDateString('en-GB', { month:'long' }); }
@@ -479,6 +636,64 @@
     Object.keys(val).forEach(id=>{ if (val[id] && typeof val[id] === 'object') whispers[id] = Object.assign({}, val[id], { id }); });
     whispersLoaded = true; requestRender();
   }, (err)=> showError('Could not load whispers: ' + err.message));
+
+  const teamRef = db.ref('mqlPush/_team');
+  teamRef.on('value', (snap)=>{
+    const v = toArr(snap.val()).map(String).map(x=> x.trim()).filter(Boolean);
+    team = v.length ? v : DEFAULT_TEAM.slice();
+    requestRender();
+  }, (err)=> showError('Could not load the team: ' + err.message));
+  function editTeam(){
+    const v = prompt('Who\'s on the team? Separate names with commas.', team.join(', '));
+    if (v == null) return;
+    const list = v.split(',').map(x=> x.trim()).filter(Boolean);
+    if (list.length) teamRef.set(list).catch(fail('Save'));
+  }
+  function whoOptions(sel, emptyLabel){
+    const names = team.slice();
+    if (sel && !names.includes(sel)) names.push(sel);
+    return `<option value="">${esc(emptyLabel || 'Who?')}</option>` + names.map(n=> `<option value="${esc(n)}" ${n === sel ? 'selected' : ''}>${esc(n)}</option>`).join('');
+  }
+  const quote = (t)=> '“' + t + '”';
+  const actsOf = (w)=> toArr(w && w.actions);
+  const writeActs = (wid, list)=> wRef.child(wid + '/actions').set(list).catch(fail('Save'));
+  const logEvent = (wid, text)=> wRef.child(wid + '/log').push({ at: todayISO(), text }).catch(fail('Save'));
+  const byDue = (a,b)=> (a.date ? 0 : 1) - (b.date ? 0 : 1) || String(a.date || '').localeCompare(String(b.date || ''));
+  function nextAction(w){ const open = actsOf(w).filter(a=> !a.done).sort(byDue); return open[0] || null; }
+  const hasAgreed = (w)=> actsOf(w).some(a=> !a.done && a.owner && a.date);
+  const isBanked = (id)=> !!(shortlist()[id] && shortlist()[id].banked);
+  function setOwner(wid, v){ updateWhisper(wid, { owner: v }); logEvent(wid, v ? 'Owner set to ' + v : 'Owner cleared'); }
+
+  // One-off tidy-up: actions used to live on the push cards and in a single "next step" field.
+  // Move them onto the whisper so every whisper has one action list.
+  const migrated = new Set();
+  function migrate(){
+    if (migrated.has(monthKey)) return;
+    migrated.add(monthKey);
+    const wUpd = {}, pUpd = {};
+    const sl = shortlist();
+    Object.keys(sl).forEach(id=>{
+      const e = sl[id] || {}, w = whispers[id];
+      if (!w) return;
+      const ideas = toArr(e.ideas);
+      const have = new Set(actsOf(w).map(a=> a.id));
+      const add = ideas.filter(i=> i && !have.has(i.id)).map(i=> Object.assign({ owner: e.owner || '', date:'', agreed:'', slips:0 }, i));
+      if (add.length) wUpd[id + '/actions'] = actsOf(w).concat(add);
+      if (e.owner && !w.owner) wUpd[id + '/owner'] = e.owner;
+      toArr(e.log).forEach((l, n)=>{ wUpd[id + '/log/m' + monthKey.replace('-','') + '_' + String(n).padStart(3,'0')] = l; });
+      if (e.ideas) pUpd['shortlist/' + id + '/ideas'] = null;
+      if (e.log) pUpd['shortlist/' + id + '/log'] = null;
+      if (e.owner) pUpd['shortlist/' + id + '/owner'] = null;
+    });
+    Object.values(whispers).forEach(w=>{
+      if (!(w.nextStep || '').trim() || w.nextStepMoved) return;
+      const base = wUpd[w.id + '/actions'] || actsOf(w);
+      wUpd[w.id + '/actions'] = base.concat([{ id: uid('a'), text: w.nextStep.trim(), done:false, date: w.checkDate || '', owner: wUpd[w.id + '/owner'] || w.owner || '', agreed:'', slips:0 }]);
+      wUpd[w.id + '/nextStepMoved'] = true;
+    });
+    if (Object.keys(wUpd).length) wRef.update(wUpd).catch(fail('Save'));
+    if (Object.keys(pUpd).length) pushRef.update(pUpd).catch(fail('Save'));
+  }
 
   function bindMonth(){
     if (pushRef) pushRef.off();
@@ -514,21 +729,26 @@
     if (e) return 'Delete ' + name + '?\n\nIt is in the ' + m + ' push but has NOT been banked. Deleting it now will drop its value from the push and the target.\n\nIf it has become an MQL, press Cancel and use "Bank as MQL" first.';
     return 'Remove ' + name + '?';
   }
-  const newEntry = (w)=> ({ confidence:'warm', oneThing:'', ideas:[], name: w.company || '', addedAt: todayISO() });
+  const newEntry = (w)=> ({ confidence:'warm', oneThing:'', name: w.company || '', addedAt: todayISO() });
 
   // ---------- Tabs ----------
+  const TABS = ['push', 'actions', 'whispers'];
+  const tabBtn = { push: 'tabPush', actions: 'tabActions', whispers: 'tabWhispers' };
+  const tabView = { push: 'viewPush', actions: 'viewActions', whispers: 'viewWhispers' };
   function setTab(t){
     activeTab = t;
     try{ history.replaceState(null, '', '#' + t); }catch(e){}
     renderAll();
+    window.scrollTo({ top: Math.min(window.scrollY, document.querySelector('.tabs').offsetTop - 10) });
   }
   $('tabPush').onclick = ()=> setTab('push');
-  $('tabWhispers').onclick = ()=> setTab('whispers');
+  $('tabActions').onclick = ()=> setTab('actions');
+  $('tabWhispers').onclick = ()=>{ selectedWhisperId = null; setTab('whispers'); };
   window.addEventListener('hashchange', ()=>{
     const h = (location.hash || '').replace('#','');
-    if ((h === 'push' || h === 'whispers') && h !== activeTab){ activeTab = h; renderAll(); }
+    if (TABS.includes(h) && h !== activeTab){ activeTab = h; renderAll(); }
   });
-  function openWhisper(id){ selectedWhisperId = id; setTab('whispers'); }
+  function openWhisper(id){ selectedWhisperId = id; setTab('whispers'); window.scrollTo({ top: document.querySelector('.tabs').offsetTop - 10 }); }
 
   // ---------- Render ----------
   function pushItems(){
@@ -541,18 +761,24 @@
 
   function renderAll(){
     if (!whispersLoaded || !pushLoaded) return;
+    migrate();
     const items = pushItems();
     $('monthLabel').textContent = monthLabel(monthKey);
     renderTarget(items);
     $('pushCount').textContent = items.length;
     $('whisperCount').textContent = Object.keys(whispers).length;
-    $('tabPush').classList.toggle('active', activeTab === 'push');
-    $('tabWhispers').classList.toggle('active', activeTab === 'whispers');
-    $('tabPush').setAttribute('aria-selected', activeTab === 'push');
-    $('tabWhispers').setAttribute('aria-selected', activeTab === 'whispers');
-    $('viewPush').classList.toggle('hidden', activeTab !== 'push');
-    $('viewWhispers').classList.toggle('hidden', activeTab !== 'whispers');
-    if (activeTab === 'push'){ renderCards(items); renderMoves(items); renderLoose(); }
+    const today = todayISO();
+    const open = Object.values(whispers).flatMap(w=> actsOf(w).filter(a=> !a.done));
+    const nLate = open.filter(a=> a.date && a.date < today).length;
+    $('actCount').textContent = nLate ? nLate + ' overdue' : open.length;
+    $('actCount').classList.toggle('late', !!nLate);
+    TABS.forEach(t=>{
+      $(tabBtn[t]).classList.toggle('active', activeTab === t);
+      $(tabBtn[t]).setAttribute('aria-selected', activeTab === t);
+      $(tabView[t]).classList.toggle('hidden', activeTab !== t);
+    });
+    if (activeTab === 'push') renderCards(items);
+    else if (activeTab === 'actions'){ renderActions(); renderLoose(); }
     else renderWhispers();
   }
 
@@ -614,6 +840,132 @@
     };
   }
 
+  // ---------- Shared: flags, action rows, history ----------
+  function flagsFor(w){
+    if (isBanked(w.id)) return [];
+    const today = todayISO(), open = actsOf(w).filter(a=> !a.done), f = [];
+    if (!w.owner) f.push(['warn', 'No owner yet. Pick who is driving this one.']);
+    if (!open.some(a=> a.owner && a.date)) f.push(['warn', 'No agreed next action. Add one with an owner and a due date.']);
+    const late = open.filter(a=> a.date && a.date < today);
+    if (late.length) f.push(['late', late.length === 1 ? '1 action overdue.' : late.length + ' actions overdue.']);
+    open.filter(a=> (Number(a.slips) || 0) >= 2).forEach(a=> f.push(['late', quote(a.text) + ' has slipped ' + a.slips + ' times. Escalate, reassign or drop it.']));
+    return f;
+  }
+  const flagsHTML = (f)=> f.length ? `<div class="flags">${f.map(x=> `<div class="flag ${x[0]}">${esc(x[1])}</div>`).join('')}</div>` : '';
+
+  function addAction(wid, text, owner, date){
+    const w = whispers[wid]; if (!w || !text) return;
+    writeActs(wid, actsOf(w).concat([{ id: uid('a'), text, done:false, owner: owner || '', date: date || '', agreed: todayISO(), slips:0 }]));
+    logEvent(wid, 'Agreed: ' + quote(text) + (owner ? ', ' + owner : '') + (date ? ', due ' + fmtDate(date) : ''));
+  }
+
+  function actionRow(w, a, opts){
+    opts = opts || {};
+    const today = todayISO();
+    const late = !!(a.date && a.date < today && !a.done);
+    const slips = Number(a.slips) || 0;
+    const tip = [a.agreed ? 'Agreed ' + fmtDate(a.agreed) : '', a.doneAt ? 'Done ' + fmtDate(a.doneAt) : ''].filter(Boolean).join(', ');
+    const row = document.createElement('div');
+    row.className = 'act' + (a.done ? ' done' : '') + (late ? ' late' : '');
+    row.innerHTML = `
+      <input type="checkbox" class="act-cb" ${a.done ? 'checked' : ''} aria-label="Mark done">
+      <div class="act-body">
+        ${opts.showWhisper ? `<div class="act-co"><button type="button" class="act-link">${esc(w.company || 'Untitled')}</button>${shortlist()[w.id] ? `<span class="pill">In push</span>` : ''}</div>` : ''}
+        <span class="act-text" ${tip ? `title="${esc(tip)}"` : ''}>${esc(a.text)}</span>${slips && !a.done ? `<span class="slip ${slips >= 2 ? 'bad' : ''}">slipped ${slips}×</span>` : ''}
+      </div>
+      <select class="act-who ${a.owner ? '' : 'unset'}" aria-label="Who owns this action">${whoOptions(a.owner || '')}</select>
+      <input type="date" class="act-date ${a.date ? 'set' : ''} ${late ? 'late' : ''}" value="${esc(a.date || '')}" aria-label="Due date">
+      <button type="button" class="x" aria-label="Delete action">×</button>`;
+    const cur = ()=> actsOf(whispers[w.id]);
+    const patch = (fields)=> writeActs(w.id, cur().map(x=> x.id === a.id ? Object.assign({}, x, fields) : x));
+    row.querySelector('.act-cb').onchange = (e)=>{
+      const done = e.target.checked;
+      patch({ done, doneAt: done ? todayISO() : '' });
+      logEvent(w.id, (done ? 'Done: ' : 'Reopened: ') + quote(a.text) + (done && a.owner ? ' (' + a.owner + ')' : ''));
+    };
+    row.querySelector('.act-who').onchange = (e)=>{
+      const v = e.target.value;
+      patch({ owner: v });
+      logEvent(w.id, quote(a.text) + (v ? ' assigned to ' + v : ' unassigned'));
+    };
+    row.querySelector('.act-date').onchange = (e)=>{
+      const nd = e.target.value || '', od = a.date || '';
+      if (nd === od) return;
+      const slipped = !a.done && od && nd && nd > od && od <= today;
+      patch({ date: nd, slips: slips + (slipped ? 1 : 0) });
+      if (!nd) logEvent(w.id, 'Due date cleared on ' + quote(a.text));
+      else if (!od) logEvent(w.id, quote(a.text) + ' due ' + fmtDate(nd));
+      else logEvent(w.id, quote(a.text) + ' moved from ' + fmtDate(od) + ' to ' + fmtDate(nd) + (slipped ? ' (slipped)' : ''));
+    };
+    row.querySelector('.x').onclick = ()=>{
+      if (!confirm('Delete ' + quote(a.text) + '?')) return;
+      writeActs(w.id, cur().filter(x=> x.id !== a.id));
+      if (!a.done) logEvent(w.id, 'Dropped: ' + quote(a.text));
+    };
+    const link = row.querySelector('.act-link');
+    if (link) link.onclick = ()=> openWhisper(w.id);
+    return row;
+  }
+
+  function addActionRow(w){
+    const row = document.createElement('div');
+    row.className = 'act-add';
+    row.innerHTML = `
+      <input type="text" class="aa-text" placeholder="Add an action, then press Enter" aria-label="New action">
+      <select class="aa-who" aria-label="Who owns it">${whoOptions(w.owner || '')}</select>
+      <input type="date" class="aa-date" aria-label="Due date">
+      <button type="button" class="secondary small">Add</button>`;
+    const t = row.querySelector('.aa-text');
+    const go = ()=>{
+      const text = t.value.trim(); if (!text) { t.focus(); return; }
+      addAction(w.id, text, row.querySelector('.aa-who').value, row.querySelector('.aa-date').value);
+      t.value = ''; row.querySelector('.aa-date').value = '';
+    };
+    row.querySelector('button').onclick = go;
+    t.addEventListener('keydown', e=>{ if (e.key === 'Enter') go(); });
+    return row;
+  }
+
+  const showDone = new Set(), openHistory = new Set();
+  function actionsBlock(w){
+    const box = document.createElement('section');
+    box.className = 'acts';
+    const all = actsOf(w);
+    const open = all.filter(a=> !a.done).sort(byDue);
+    const done = all.filter(a=> a.done).sort((a,b)=> String(b.doneAt || '').localeCompare(String(a.doneAt || '')));
+    box.innerHTML = `<div class="acts-head"><h4>Actions</h4><span class="acts-count">${open.length} open${done.length ? ', ' + done.length + ' done' : ''}</span></div>`;
+    if (!open.length) box.insertAdjacentHTML('beforeend', `<p class="acts-empty">No open actions. Add the next one below.</p>`);
+    open.forEach(a=> box.appendChild(actionRow(w, a)));
+    box.appendChild(addActionRow(w));
+    const foot = document.createElement('div');
+    foot.className = 'acts-foot';
+    if (done.length){
+      const tg = document.createElement('button');
+      tg.type = 'button'; tg.className = 'link-btn';
+      tg.textContent = showDone.has(w.id) ? 'Hide done actions' : 'Show ' + done.length + ' done';
+      tg.onclick = ()=>{ showDone.has(w.id) ? showDone.delete(w.id) : showDone.add(w.id); renderAll(); };
+      foot.appendChild(tg);
+    }
+    const log = toArr(w.log).slice().reverse().sort((a,b)=> String(b.at || '').localeCompare(String(a.at || '')));
+    if (log.length){
+      const tg = document.createElement('button');
+      tg.type = 'button'; tg.className = 'link-btn';
+      tg.textContent = openHistory.has(w.id) ? 'Hide history' : 'History (' + log.length + ')';
+      tg.onclick = ()=>{ openHistory.has(w.id) ? openHistory.delete(w.id) : openHistory.add(w.id); renderAll(); };
+      foot.appendChild(tg);
+    }
+    if (foot.children.length) box.appendChild(foot);
+    if (showDone.has(w.id) && done.length){
+      const d = document.createElement('div'); d.className = 'acts-done';
+      done.forEach(a=> d.appendChild(actionRow(w, a)));
+      box.appendChild(d);
+    }
+    if (openHistory.has(w.id) && log.length){
+      box.insertAdjacentHTML('beforeend', `<div class="h-list">${log.map(h=> `<div class="h-row"><span class="h-at">${esc(fmtDate(h.at))}</span><span>${esc(h.text)}</span></div>`).join('')}</div>`);
+    }
+    return box;
+  }
+
   // ---------- Push tab ----------
   function sortKey(it){
     if (it.gone) return 9999;
@@ -653,117 +1005,166 @@
 
     const r = it.ready;
     const sub = [w.location, w.projectType, w.closeDate ? 'close ' + fmtDate(w.closeDate) : ''].filter(Boolean).join(' · ');
-    const cs = checkStatus(w);
-    const nextLine = (w.nextStep || w.checkDate || w.mqlMonth)
-      ? `<div class="next-line"><b>Next step:</b> ${esc(w.nextStep || 'not set')}${w.checkDate ? ` · check <span class="${cs === 'late' || cs === 'today' ? cs : ''}">${esc(fmtDate(w.checkDate))}${cs === 'late' ? ' (overdue)' : ''}</span>` : ''}${w.mqlMonth ? ` · likely MQL ${esc(monthShortLabel(w.mqlMonth))}` : ''}</div>`
-      : '';
     const dots = r.st.map(x=> `<span class="dot ${x.s === 'ok' ? 'ok' : x.s === 'fail' ? 'fail' : ''}" title="${esc(x.f.short)}${x.s === 'fail' ? ' (needs Yes)' : x.s === 'ok' ? ' ✓' : ' — missing'}"></span>`).join('')
       + `<span class="dot signoff ${r.signed ? 'ok' : ''}" title="Winnable sign-off${r.signed ? ' ✓' : ' — not yet'}"></span>`;
-    let gapText;
-    if (r.ready) gapText = `<div class="gap-text done">All criteria met and signed off as winnable — ready to bank.</div>`;
-    else {
-      const names = r.missing.map(x=> x.f.short + (x.s === 'fail' ? ' (needs Yes)' : ''));
-      if (!r.signed) names.push('winnable sign-off');
-      gapText = `<div class="gap-text"><b>${r.toGo} to go:</b> ${esc(names.join(', '))}</div>`
-        + (entry.banked ? '' : `<div class="gap-fix"><button class="secondary small" data-act="fix">Fill in the gaps</button></div>`);
-    }
-
-    const ideas = toArr(entry.ideas);
-    const today = todayISO();
-    const ideaRows = ideas.map(i=> `
-      <div class="idea ${i.done ? 'done' : ''}" data-id="${esc(i.id)}">
-        <input type="checkbox" ${i.done ? 'checked' : ''} aria-label="Done">
-        <span class="txt">${esc(i.text)}</span>
-        <input type="date" class="when ${i.date ? 'set' : ''} ${i.date && i.date < today && !i.done ? 'late' : ''}" value="${esc(i.date || '')}" title="Give it a date to make it a move">
-        <button class="x" aria-label="Delete idea">×</button>
-      </div>`).join('');
+    const names = r.missing.map(x=> x.f.short + (x.s === 'fail' ? ' (needs Yes)' : ''));
+    if (!r.signed) names.push('winnable sign-off');
 
     el.innerHTML = `
       <div class="card-head">
-        <div>
-          <p class="c-name">${esc(w.company || 'Untitled')}</p>
+        <div class="c-title">
+          <button type="button" class="c-name" data-act="open" title="Open whisper">${esc(w.company || 'Untitled')}</button>
           ${sub ? `<div class="c-sub">${esc(sub)}</div>` : ''}
         </div>
         <div class="c-amount">${it.amount ? money(it.amount) : '£—'}<small>${entry.banked ? 'banked ' + fmtDate(entry.banked.at) : 'whisper value'}</small></div>
       </div>
-      ${entry.banked ? '' : `<div class="conf" role="group" aria-label="Confidence">
-        ${['hot','warm','punt'].map(c=> `<button data-conf="${c}" class="${c} ${conf === c ? 'on' : ''}">${c === 'punt' ? 'Long shot' : c[0].toUpperCase() + c.slice(1)}</button>`).join('')}
-      </div>`}
-      ${nextLine}
-      <div class="gap-row"><div class="dots" aria-hidden="true">${dots}</div>${gapText}</div>
+      <div class="card-meta">
+        <label class="owner">Owner <select class="owner-sel ${w.owner ? '' : 'unset'}">${whoOptions(w.owner || '', 'Pick owner')}</select></label>
+        ${entry.banked ? '' : `<div class="conf" role="group" aria-label="Confidence">
+          ${['hot','warm','punt'].map(c=> `<button type="button" data-conf="${c}" class="${c} ${conf === c ? 'on' : ''}">${c === 'punt' ? 'Long shot' : c[0].toUpperCase() + c.slice(1)}</button>`).join('')}
+        </div>`}
+      </div>
+      ${flagsHTML(flagsFor(w))}
+      <div class="crit-strip">
+        <div class="dots" aria-hidden="true">${dots}</div>
+        ${r.ready ? `<span class="crit-sum done">Criteria met and signed off. Ready to bank.</span>`
+          : `<span class="crit-sum"><b>${r.toGo} to go</b> before it can be banked</span>${entry.banked ? '' : `<button type="button" class="link-btn" data-act="fix">Fill in the gaps</button>`}`}
+      </div>
+      ${r.ready ? '' : `<div class="crit-missing">Missing: ${esc(names.join(', '))}</div>`}
       <div class="onething">
         <label>The one thing</label>
         <input class="ot-input" type="text" value="${esc(entry.oneThing || '')}" placeholder="What would tip this to MQL?" aria-label="The one thing that would tip this to MQL">
       </div>
-      <div class="ideas">
-        <p class="ideas-title">Ideas & next steps</p>
-        ${ideaRows}
-        <div class="add-row"><input type="text" placeholder="Fire an idea… (Enter to add)"><button class="secondary small">Add</button></div>
-      </div>
+      <div class="acts-slot"></div>
       <div class="card-foot">
         <div class="foot-left">
-          <button class="link-btn" data-act="open">Open whisper</button>
-          ${entry.banked ? '' : `<button class="link-btn" data-act="drop">Remove from push</button>`}
+          <button type="button" class="link-btn" data-act="open">Open whisper</button>
+          ${entry.banked ? '' : `<button type="button" class="link-btn" data-act="drop">Remove from push</button>`}
         </div>
         ${entry.banked
-          ? `<span><span class="banked-tag">Banked as MQL</span> <button class="link-btn" data-act="unbank">Undo bank</button></span>`
-          : `<button class="promote small" data-act="bank" ${r.ready ? '' : 'disabled'} title="${r.ready ? 'Bank this value against the target' : 'Complete the criteria and sign-off first'}">Bank as MQL</button>`}
+          ? `<span><span class="banked-tag">Banked as MQL</span> <button type="button" class="link-btn" data-act="unbank">Undo bank</button></span>`
+          : `<button type="button" class="promote small" data-act="bank" ${r.ready ? '' : 'disabled'} title="${r.ready ? 'Bank this value against the target' : 'Complete the criteria and sign-off first'}">Bank as MQL</button>`}
       </div>`;
+    el.querySelector('.acts-slot').replaceWith(actionsBlock(w));
 
-    el.querySelectorAll('[data-conf]').forEach(b=> b.onclick = ()=> pushSave('shortlist/' + id + '/confidence', b.dataset.conf));
+    el.querySelectorAll('[data-conf]').forEach(b=> b.onclick = ()=>{
+      if (b.dataset.conf === conf) return;
+      pushSave('shortlist/' + id + '/confidence', b.dataset.conf);
+      logEvent(id, 'Confidence set to ' + (b.dataset.conf === 'punt' ? 'long shot' : b.dataset.conf));
+    });
+    el.querySelector('.owner-sel').onchange = (e)=> setOwner(id, e.target.value);
     const ot = el.querySelector('.ot-input');
     const saveOt = ()=>{ if ((entry.oneThing || '') !== ot.value.trim()) pushSave('shortlist/' + id + '/oneThing', ot.value.trim()); };
     ot.addEventListener('blur', saveOt);
     ot.addEventListener('keydown', e=>{ if (e.key === 'Enter') ot.blur(); });
-    const writeIdeas = (list)=> pushSave('shortlist/' + id + '/ideas', list);
-    el.querySelectorAll('.idea').forEach(row=>{
-      const iid = row.dataset.id;
-      row.querySelector('input[type=checkbox]').onchange = (e)=> writeIdeas(ideas.map(i=> i.id === iid ? Object.assign({}, i, { done:e.target.checked }) : i));
-      row.querySelector('.when').onchange = (e)=> writeIdeas(ideas.map(i=> i.id === iid ? Object.assign({}, i, { date:e.target.value || '' }) : i));
-      row.querySelector('.x').onclick = ()=> writeIdeas(ideas.filter(i=> i.id !== iid));
-    });
-    const addIn = el.querySelector('.add-row input');
-    const addIdea = ()=>{ const t = addIn.value.trim(); if (!t) return; addIn.value = ''; writeIdeas(ideas.concat([{ id:uid('i'), text:t, done:false, date:'' }])); addIn.focus(); };
-    el.querySelector('.add-row button').onclick = addIdea;
-    addIn.addEventListener('keydown', e=>{ if (e.key === 'Enter') addIdea(); });
+    el.querySelectorAll('[data-act=open]').forEach(b=> b.onclick = ()=> openWhisper(id));
     const act = (a)=> el.querySelector('[data-act=' + a + ']');
     if (act('fix')) act('fix').onclick = ()=> openWhisperModal(w);
-    if (act('open')) act('open').onclick = ()=> openWhisper(id);
-    if (act('drop')) act('drop').onclick = ()=>{ if (confirm('Take ' + (w.company || 'this whisper') + ' out of this month\'s push? (The whisper itself stays in All whispers.)')) pushRemove('shortlist/' + id); };
-    if (act('bank')) act('bank').onclick = ()=> pushSave('shortlist/' + id + '/banked', { amount: amountOf(w), at: todayISO() });
-    if (act('unbank')) act('unbank').onclick = ()=> pushRemove('shortlist/' + id + '/banked');
+    if (act('drop')) act('drop').onclick = ()=>{ if (confirm('Take ' + (w.company || 'this whisper') + ' out of this month\'s push? (The whisper and its actions stay in All whispers.)')) pushRemove('shortlist/' + id); };
+    if (act('bank')) act('bank').onclick = ()=>{ pushSave('shortlist/' + id + '/banked', { amount: amountOf(w), at: todayISO() }); logEvent(id, 'Banked as MQL at ' + money(amountOf(w))); };
+    if (act('unbank')) act('unbank').onclick = ()=>{ pushRemove('shortlist/' + id + '/banked'); logEvent(id, 'Bank undone'); };
     return el;
   }
 
-  function renderMoves(items){
-    const today = todayISO(), weekEnd = isoPlus(7);
-    const moves = [];
-    items.forEach(it=> toArr(it.entry.ideas).forEach(i=>{
-      if (i.date && !i.done) moves.push({ i, it, co: it.w ? it.w.company : (it.entry.name || '') });
+  // ---------- Team actions tab ----------
+  let actWho = 'all', actScope = 'all';
+  function actionPool(){
+    const ids = actScope === 'push' ? Object.keys(shortlist()).filter(id=> whispers[id]) : Object.keys(whispers);
+    return ids.map(id=> whispers[id]);
+  }
+  const whoLabel = (p)=> p === 'all' ? 'Everyone' : p === '_none' ? 'No owner' : p;
+
+  function renderActions(){
+    const today = todayISO(), weekEnd = isoPlus(7), weekAgo = isoPlus(-7);
+    const pool = actionPool();
+    const match = (o)=> actWho === 'all' || (actWho === '_none' ? !o : o === actWho);
+    if (actWho !== 'all' && actWho !== '_none' && !team.includes(actWho)) actWho = 'all';
+
+    const open = [], doneRecent = [];
+    pool.forEach(w=> actsOf(w).forEach(a=>{
+      if (!match(a.owner)) return;
+      if (!a.done) open.push({ w, a });
+      else if (a.doneAt && a.doneAt >= weekAgo) doneRecent.push({ w, a });
     }));
-    toArr(push.loose).forEach(i=>{ if (i.date && !i.done) moves.push({ i, loose:true, co:'Loose idea' }); });
-    moves.sort((a,b)=> a.i.date.localeCompare(b.i.date));
+    open.sort((x,y)=> byDue(x.a, y.a));
+    doneRecent.sort((x,y)=> String(y.a.doneAt).localeCompare(String(x.a.doneAt)));
+
+    const people = ['all'].concat(team, ['_none']);
+    const wOpts = Object.values(whispers).sort((a,b)=> String(a.company || '').localeCompare(String(b.company || '')))
+      .map(w=> `<option value="${esc(w.id)}">${esc(w.company || 'Untitled')}${shortlist()[w.id] ? ' (in push)' : ''}</option>`).join('');
+    $('actTools').innerHTML = `
+      <div class="act-tools">
+        <div class="tgroup" role="group" aria-label="Show actions for">${people.map(p=> `<button type="button" data-who="${esc(p)}" class="${actWho === p ? 'on' : ''}">${esc(whoLabel(p))}</button>`).join('')}</div>
+        <div class="tgroup" role="group" aria-label="Which whispers">
+          <button type="button" data-scope="all" class="${actScope === 'all' ? 'on' : ''}">All whispers</button>
+          <button type="button" data-scope="push" class="${actScope === 'push' ? 'on' : ''}">${esc(monthName(monthKey))} push</button>
+        </div>
+      </div>
+      <div class="quick-add">
+        <select class="qa-w" aria-label="Which whisper"><option value="">Which whisper?</option>${wOpts}</select>
+        <input type="text" class="qa-text" placeholder="New action" aria-label="New action">
+        <select class="qa-who" aria-label="Who owns it">${whoOptions(team.includes(actWho) ? actWho : '')}</select>
+        <input type="date" class="qa-date" aria-label="Due date">
+        <button type="button" class="small">Add action</button>
+      </div>`;
+    $('actTools').querySelectorAll('[data-who]').forEach(b=> b.onclick = ()=>{ actWho = b.dataset.who; renderActions(); });
+    $('actTools').querySelectorAll('[data-scope]').forEach(b=> b.onclick = ()=>{ actScope = b.dataset.scope; renderActions(); });
+    const qa = $('actTools').querySelector('.quick-add');
+    const qaGo = ()=>{
+      const wid = qa.querySelector('.qa-w').value, text = qa.querySelector('.qa-text').value.trim();
+      if (!wid){ qa.querySelector('.qa-w').classList.add('needs'); qa.querySelector('.qa-w').focus(); return; }
+      if (!text){ qa.querySelector('.qa-text').focus(); return; }
+      addAction(wid, text, qa.querySelector('.qa-who').value, qa.querySelector('.qa-date').value);
+    };
+    qa.querySelector('button').onclick = qaGo;
+    qa.querySelector('.qa-text').addEventListener('keydown', e=>{ if (e.key === 'Enter') qaGo(); });
+
     const groups = [
-      { label:'Overdue', cls:'late', list: moves.filter(m=> m.i.date < today) },
-      { label:'Today', list: moves.filter(m=> m.i.date === today) },
-      { label:'Next 7 days', list: moves.filter(m=> m.i.date > today && m.i.date <= weekEnd) },
-      { label:'Later', list: moves.filter(m=> m.i.date > weekEnd) }
+      { label:'Overdue', cls:'late', list: open.filter(x=> x.a.date && x.a.date < today) },
+      { label:'Due in the next 7 days', list: open.filter(x=> x.a.date && x.a.date >= today && x.a.date <= weekEnd) },
+      { label:'Later', list: open.filter(x=> x.a.date && x.a.date > weekEnd) },
+      { label:'No due date', cls:'warn', list: open.filter(x=> !x.a.date) },
+      { label:'Done in the last 7 days', cls:'done', list: doneRecent }
     ].filter(g=> g.list.length);
-    const box = $('moves');
-    if (!groups.length){ box.innerHTML = `<p class="p-sub" style="margin:0">No dated moves yet.</p>`; return; }
-    box.innerHTML = groups.map(g=> `<div class="move-group ${g.cls || ''}">${g.label}</div>` + g.list.map((m, n)=> `
-      <div class="move" data-g="${g.label}" data-n="${n}">
-        <input type="checkbox" aria-label="Done">
-        <span class="m-body"><span class="m-co">${esc(m.co)}</span>${esc(m.i.text)}</span>
-        <span class="m-date">${fmtDate(m.i.date)}</span>
-      </div>`).join('')).join('');
-    groups.forEach(g=> g.list.forEach((m, n)=>{
-      const row = box.querySelector(`.move[data-g="${g.label}"][data-n="${n}"]`);
-      row.querySelector('input').onchange = ()=>{
-        if (m.loose) pushSave('loose', toArr(push.loose).map(i=> i.id === m.i.id ? Object.assign({}, i, { done:true }) : i));
-        else pushSave('shortlist/' + m.it.id + '/ideas', toArr(m.it.entry.ideas).map(i=> i.id === m.i.id ? Object.assign({}, i, { done:true }) : i));
-      };
-    }));
+    const box = $('actList');
+    box.innerHTML = '';
+    if (!groups.length){
+      box.innerHTML = `<div class="empty">No actions ${actWho === 'all' ? 'yet' : 'for ' + esc(whoLabel(actWho))}.<br>Add one above, or from a whisper's card.</div>`;
+    }
+    groups.forEach(g=>{
+      const sec = document.createElement('div');
+      sec.className = 'act-group ' + (g.cls || '');
+      sec.innerHTML = `<div class="ag-head"><span>${g.label}</span><span class="ag-n">${g.list.length}</span></div>`;
+      g.list.forEach(x=> sec.appendChild(actionRow(x.w, x.a, { showWhisper:true })));
+      box.appendChild(sec);
+    });
+
+    // By person
+    const stat = (p)=>{
+      let o = 0, l = 0, d = 0;
+      pool.forEach(w=> actsOf(w).forEach(a=>{
+        const m = p === '_none' ? !a.owner : a.owner === p;
+        if (!m) return;
+        if (!a.done){ o++; if (a.date && a.date < today) l++; }
+        else if (a.doneAt && a.doneAt >= weekAgo) d++;
+      }));
+      return { o, l, d };
+    };
+    const rows = team.concat(['_none']).map(p=> ({ p, s: stat(p) })).filter(x=> x.p !== '_none' || x.s.o || x.s.d);
+    $('byPerson').innerHTML = `<div class="bp-head"><span></span><span>Open</span><span>Overdue</span><span>Done 7d</span></div>`
+      + rows.map(x=> `<button type="button" class="bp-row ${actWho === x.p ? 'on' : ''}" data-p="${esc(x.p)}">
+          <span class="bp-name">${esc(whoLabel(x.p))}</span><span>${x.s.o}</span><span class="${x.s.l ? 'bp-late' : ''}">${x.s.l}</span><span>${x.s.d}</span></button>`).join('')
+      + `<button type="button" class="link-btn bp-edit" id="editTeam">Edit team</button>`;
+    $('byPerson').querySelectorAll('.bp-row').forEach(b=> b.onclick = ()=>{ actWho = actWho === b.dataset.p ? 'all' : b.dataset.p; renderActions(); });
+    $('editTeam').onclick = editTeam;
+
+    // No agreed action
+    const missing = pool.filter(w=> !isBanked(w.id) && !hasAgreed(w)).sort((a,b)=> (shortlist()[b.id] ? 1 : 0) - (shortlist()[a.id] ? 1 : 0) || amountOf(b) - amountOf(a));
+    $('noAct').innerHTML = missing.length
+      ? missing.map(w=> `<button type="button" class="na-row" data-id="${esc(w.id)}"><span>${esc(w.company || 'Untitled')}</span>${shortlist()[w.id] ? `<span class="pill">In push</span>` : ''}</button>`).join('')
+      : `<p class="p-sub" style="margin:0; color:var(--promoter); font-weight:600">Every whisper has an agreed action.</p>`;
+    $('noAct').querySelectorAll('.na-row').forEach(b=> b.onclick = ()=> openWhisper(b.dataset.id));
+    $('looseSub').textContent = 'Thoughts for ' + monthName(monthKey) + ' not tied to a whisper yet.';
   }
 
   function renderLoose(){
@@ -815,79 +1216,88 @@
       const w = whispers[selectedWhisperId];
       if (!w){ selectedWhisperId = null; renderWhispers(); return; }
       const back = document.createElement('button');
-      back.className = 'secondary small';
-      back.textContent = '← Back to all whispers';
-      back.style.marginBottom = '14px';
+      back.className = 'secondary small back-btn';
+      back.textContent = '← All whispers';
       back.onclick = ()=>{ selectedWhisperId = null; renderWhispers(); };
       area.appendChild(back);
       area.appendChild(whisperCard(w));
       return;
     }
-    // summary line + sort
-    const nLate = list.filter(w=> checkStatus(w) === 'late').length;
-    const nToday = list.filter(w=> checkStatus(w) === 'today').length;
-    const nNoStep = list.filter(w=> !(w.nextStep || '').trim()).length;
+    const today = todayISO();
+    const nLate = list.reduce((n, w)=> n + actsOf(w).filter(a=> !a.done && a.date && a.date < today).length, 0);
+    const nNoAct = list.filter(w=> !isBanked(w.id) && !hasAgreed(w)).length;
+    const nNoOwner = list.filter(w=> !w.owner).length;
     const chips = [];
-    if (nLate) chips.push(`<span class="chip late">${nLate} check${nLate === 1 ? '' : 's'} overdue</span>`);
-    if (nToday) chips.push(`<span class="chip today">${nToday} due today</span>`);
-    if (nNoStep) chips.push(`<span class="chip">${nNoStep} without a next step</span>`);
-    if (!chips.length) chips.push(`<span class="chip ok">Every whisper has a next step and nothing is overdue</span>`);
+    if (nLate) chips.push(`<span class="chip late">${nLate} action${nLate === 1 ? '' : 's'} overdue</span>`);
+    if (nNoAct) chips.push(`<span class="chip today">${nNoAct} without an agreed action</span>`);
+    if (nNoOwner) chips.push(`<span class="chip">${nNoOwner} without an owner</span>`);
+    if (!chips.length) chips.push(`<span class="chip ok">Every whisper has an owner and an agreed action</span>`);
     const top = document.createElement('div');
     top.className = 'wr-top';
     top.innerHTML = `<div class="wr-summary">${chips.join('')}</div>
-      <label class="sort-sel">Sort by
-        <select id="sortSel">
-          <option value="progress">Progress</option>
-          <option value="check">Check date, soonest first</option>
-          <option value="month">Likely MQL month, soonest first</option>
-        </select>
-      </label>`;
+      <div class="wr-filters">
+        <label class="sort-sel">Owner
+          <select id="ownerSel"><option value="all">Everyone</option>${team.map(n=> `<option value="${esc(n)}">${esc(n)}</option>`).join('')}<option value="_none">No owner</option></select>
+        </label>
+        <label class="sort-sel">Sort by
+          <select id="sortSel">
+            <option value="progress">Progress</option>
+            <option value="due">Next action, soonest first</option>
+            <option value="month">Likely MQL month, soonest first</option>
+          </select>
+        </label>
+      </div>`;
     top.querySelector('#sortSel').value = listSort;
+    top.querySelector('#ownerSel').value = listOwner;
     top.querySelector('#sortSel').onchange = (e)=>{ listSort = e.target.value; renderWhispers(); };
+    top.querySelector('#ownerSel').onchange = (e)=>{ listOwner = e.target.value; renderWhispers(); };
     area.appendChild(top);
 
     const byProgress = (a,b)=> b.r.filled - a.r.filled || a.r.toGo - b.r.toGo || amountOf(b.w) - amountOf(a.w);
+    const dueOf = (w)=>{ const n = nextAction(w); return n && n.date ? n.date : '9999'; };
     const sorters = {
       progress: byProgress,
-      check: (a,b)=> (a.w.checkDate ? 0 : 1) - (b.w.checkDate ? 0 : 1) || (a.w.checkDate || '').localeCompare(b.w.checkDate || '') || byProgress(a,b),
+      due: (a,b)=> dueOf(a.w).localeCompare(dueOf(b.w)) || byProgress(a,b),
       month: (a,b)=> (a.w.mqlMonth ? 0 : 1) - (b.w.mqlMonth ? 0 : 1) || (a.w.mqlMonth || '').localeCompare(b.w.mqlMonth || '') || byProgress(a,b)
     };
+    const shown = list.filter(w=> listOwner === 'all' || (listOwner === '_none' ? !w.owner : w.owner === listOwner));
 
     const wrap = document.createElement('div');
     wrap.className = 'whisper-list';
-    wrap.innerHTML = `<div class="wr-head"><span>Whisper</span><span>Next step</span><span>Check on</span><span>Likely MQL</span><span style="text-align:right">Status</span></div>`;
-    list.map(w=> ({ w, r: readiness(w) }))
+    wrap.innerHTML = `<div class="wr-head"><span>Whisper</span><span>Owner</span><span>Next action</span><span>Likely MQL</span><span style="text-align:right">Status</span></div>`;
+    if (!shown.length) wrap.insertAdjacentHTML('beforeend', `<div class="empty">No whispers for ${esc(whoLabel(listOwner))}.</div>`);
+    shown.map(w=> ({ w, r: readiness(w) }))
       .sort(sorters[listSort] || byProgress)
       .forEach(({ w, r })=>{
         const b = badgeFor(r);
         const row = document.createElement('div');
         row.className = 'whisper-row' + (r.ready ? ' verified' : (r.verified ? ' review' : ''));
         const amt = amountOf(w);
+        const na = nextAction(w);
+        const openN = actsOf(w).filter(a=> !a.done).length;
+        const late = !!(na && na.date && na.date < today);
+        const naHTML = na
+          ? `<div class="na ${late ? 'late' : ''}"><span class="na-text">${esc(na.text)}</span>
+              <span class="na-meta">${na.owner ? esc(na.owner) : 'No owner'}, ${na.date ? 'due ' + esc(fmtDate(na.date)) + (late ? ' (overdue)' : '') : 'no due date'}${openN > 1 ? `, +${openN - 1} more` : ''}</span></div>`
+          : `<div class="na none">No open actions</div>`;
         row.innerHTML = `
           <div class="wr-main">
             <button class="wr-name" type="button">${esc(w.company || 'Untitled')}</button>
             <div class="wr-sub">${amt ? `<span class="wr-amt">${money(amt)}</span>` : ''}${shortlist()[w.id] ? `<span class="pill">In ${esc(monthName(monthKey))} push</span>` : ''}</div>
           </div>
-          <div class="wr-cell" data-label="Next step"><input type="text" class="wr-next ${(w.nextStep || '').trim() ? '' : 'needs'}" value="${esc(w.nextStep || '')}" placeholder="What needs to happen next?" aria-label="Next step for ${esc(w.company || 'this whisper')}"></div>
-          <div class="wr-cell" data-label="Check on"><input type="date" class="wr-check ${checkStatus(w)}" value="${esc(w.checkDate || '')}" aria-label="Date to check ${esc(w.company || 'this whisper')}"></div>
+          <div class="wr-cell" data-label="Owner"><select class="wr-owner ${w.owner ? '' : 'unset'}" aria-label="Owner of ${esc(w.company || 'this whisper')}">${whoOptions(w.owner || '', 'Pick owner')}</select></div>
+          <div class="wr-cell" data-label="Next action">${naHTML}</div>
           <div class="wr-cell" data-label="Likely MQL"><select class="wr-month" aria-label="Likely MQL month for ${esc(w.company || 'this whisper')}">${monthSelectHTML(w.mqlMonth || '')}</select></div>
-          <div class="wr-status"><span class="badge ${b.cls}">${b.text}</span><button class="wr-edit" type="button">Edit criteria</button></div>`;
-        row.querySelector('.wr-name').onclick = ()=>{ selectedWhisperId = w.id; renderWhispers(); };
-        row.querySelector('.wr-edit').onclick = ()=> openWhisperModal(w);
-        row.addEventListener('click', (e)=>{ if (e.target.closest('input, select, button, textarea, label')) return; selectedWhisperId = w.id; renderWhispers(); });
-        wirePlan(row, w);
+          <div class="wr-status"><span class="badge ${b.cls}">${b.text}</span><button class="wr-edit" type="button">Open</button></div>`;
+        const open = ()=>{ selectedWhisperId = w.id; renderWhispers(); window.scrollTo({ top: document.querySelector('.tabs').offsetTop - 10 }); };
+        row.querySelector('.wr-name').onclick = open;
+        row.querySelector('.wr-edit').onclick = open;
+        row.querySelector('.wr-owner').onchange = (e)=> setOwner(w.id, e.target.value);
+        row.querySelector('.wr-month').onchange = (e)=> updateWhisper(w.id, { mqlMonth: e.target.value || '' });
+        row.addEventListener('click', (e)=>{ if (e.target.closest('input, select, button, textarea, label')) return; open(); });
         wrap.appendChild(row);
       });
     area.appendChild(wrap);
-  }
-
-  // Saves a planning field as soon as it's changed (writes only that one field)
-  function wirePlan(box, w){
-    const next = box.querySelector('.wr-next');
-    next.addEventListener('change', ()=> updateWhisper(w.id, { nextStep: next.value.trim() }));
-    next.addEventListener('keydown', e=>{ if (e.key === 'Enter') next.blur(); });
-    box.querySelector('.wr-check').addEventListener('change', e=> updateWhisper(w.id, { checkDate: e.target.value || '' }));
-    box.querySelector('.wr-month').addEventListener('change', e=> updateWhisper(w.id, { mqlMonth: e.target.value || '' }));
   }
 
   // Every criterion in order: the answer if there is one, otherwise a highlighted "still to fill in"
@@ -925,19 +1335,6 @@
     return box;
   }
 
-  function planBlock(w){
-    const st = checkStatus(w);
-    const box = document.createElement('div');
-    box.className = 'plan-box';
-    box.innerHTML = `
-      <div class="plan-cell plan-wide"><label>Next step</label><input type="text" class="wr-next ${(w.nextStep || '').trim() ? '' : 'needs'}" value="${esc(w.nextStep || '')}" placeholder="What needs to happen next?"></div>
-      <div class="plan-cell"><label>Check on</label><input type="date" class="wr-check ${st}" value="${esc(w.checkDate || '')}"></div>
-      <div class="plan-cell"><label>Likely MQL month</label><select class="wr-month">${monthSelectHTML(w.mqlMonth || '')}</select></div>
-      ${st === 'late' ? `<div class="plan-hint late">This check is overdue. Has the next step been completed?</div>` : (st === 'today' ? `<div class="plan-hint today">Check this today.</div>` : '')}`;
-    wirePlan(box, w);
-    return box;
-  }
-
   function stageStrip(w){
     const r = readiness(w);
     const e = shortlist()[w.id];
@@ -960,53 +1357,35 @@
     const card = document.createElement('div');
     card.className = 'whisper-card' + (r.ready ? ' verified' : (r.verified ? ' review' : ''));
     const mName = monthName(monthKey);
+    const sub = [w.location, w.projectType, amountOf(w) ? money(amountOf(w)) : ''].filter(Boolean).join(' · ');
     card.innerHTML = `
       <div class="wc-head">
-        <p class="wc-name">${esc(w.company || 'Untitled')}</p>
+        <div><p class="wc-name">${esc(w.company || 'Untitled')}</p>${sub ? `<div class="c-sub">${esc(sub)}</div>` : ''}</div>
         <span class="badge ${b.cls}">${b.text}</span>
       </div>
       ${stageStrip(w)}
-      <div class="wc-actions">
-        ${e ? `<button class="secondary small" data-act="viewPush">${e.banked ? 'Banked in ' + esc(mName) : 'In ' + esc(mName) + ' push'} ✓ — view</button>`
-            : `<button class="${r.ready ? 'promote-btn' : 'secondary'} small" data-act="addPush">Add to ${esc(mName)} push</button>`}
-        <button class="secondary small" data-act="edit">Edit</button>
-        <button class="secondary small" data-act="del" style="color:var(--detractor); border-color:var(--detractor);">Remove</button>
-      </div>`;
-    card.querySelector('.stages').insertAdjacentElement('afterend', planBlock(w));
-    card.querySelector('.plan-box').insertAdjacentElement('afterend', criteriaBlock(w, r));
+      <div class="wc-meta">
+        <label class="owner">Owner <select class="owner-sel ${w.owner ? '' : 'unset'}">${whoOptions(w.owner || '', 'Pick owner')}</select></label>
+        <label class="owner">Likely MQL <select class="wc-month">${monthSelectHTML(w.mqlMonth || '')}</select></label>
+        <div class="wc-buttons">
+          ${e ? `<button class="secondary small" data-act="viewPush">${e.banked ? 'Banked in ' + esc(mName) : 'In ' + esc(mName) + ' push'} ✓ View</button>`
+              : `<button class="${r.ready ? 'promote-btn' : 'secondary'} small" data-act="addPush">Add to ${esc(mName)} push</button>`}
+          <button class="secondary small" data-act="edit">Edit details</button>
+          <button class="secondary small" data-act="del" style="color:var(--detractor); border-color:var(--detractor);">Remove</button>
+        </div>
+      </div>
+      ${flagsHTML(flagsFor(w))}
+      <div class="acts-slot"></div>
+      <div class="wc-gap"></div>`;
+    card.querySelector('.acts-slot').replaceWith(actionsBlock(w));
+    card.appendChild(criteriaBlock(w, r));
+    card.querySelector('.owner-sel').onchange = (ev)=> setOwner(w.id, ev.target.value);
+    card.querySelector('.wc-month').onchange = (ev)=> updateWhisper(w.id, { mqlMonth: ev.target.value || '' });
     const act = (a)=> card.querySelector('[data-act=' + a + ']');
     act('edit').onclick = ()=> openWhisperModal(w);
     act('del').onclick = ()=>{ if (confirm(deleteWarning(w))) deleteWhisper(w.id); };
-    if (act('addPush')) act('addPush').onclick = ()=> pushSave('shortlist/' + w.id, newEntry(w));
+    if (act('addPush')) act('addPush').onclick = ()=>{ pushSave('shortlist/' + w.id, newEntry(w)); logEvent(w.id, 'Added to the ' + mName + ' push'); };
     if (act('viewPush')) act('viewPush').onclick = ()=> setTab('push');
-
-    // Actions checklist (each change writes only the actions list)
-    const todo = document.createElement('div');
-    todo.className = 'wc-todo';
-    todo.innerHTML = `<p class="wc-todo-title">Actions</p>`;
-    const actions = Array.isArray(w.actions) ? w.actions : toArr(w.actions);
-    const writeActions = (list)=> wRef.child(w.id + '/actions').set(list).catch(fail('Save'));
-    actions.forEach(a=>{
-      const row = document.createElement('div');
-      row.className = 'wc-todo-item' + (a.done ? ' done' : '');
-      const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = !!a.done;
-      cb.onchange = ()=> writeActions(actions.map(x=> x.id === a.id ? Object.assign({}, x, { done: cb.checked }) : x));
-      const tx = document.createElement('span'); tx.className = 'todo-text'; tx.textContent = a.text;
-      const del = document.createElement('button'); del.className = 'todo-del'; del.textContent = '×'; del.setAttribute('aria-label', 'Delete action');
-      del.onclick = ()=> writeActions(actions.filter(x=> x.id !== a.id));
-      row.append(cb, tx, del);
-      todo.appendChild(row);
-    });
-    const addRow = document.createElement('div');
-    addRow.className = 'wc-todo-add';
-    const ai = document.createElement('input'); ai.type = 'text'; ai.placeholder = 'Add an action…';
-    const ab = document.createElement('button'); ab.className = 'secondary'; ab.textContent = 'Add';
-    const addAction = ()=>{ const t = ai.value.trim(); if (!t) return; ai.value = ''; writeActions(actions.concat([{ id:uid('a'), text:t, done:false }])); };
-    ab.onclick = addAction;
-    ai.addEventListener('keydown', e=>{ if (e.key === 'Enter') addAction(); });
-    addRow.append(ai, ab);
-    todo.appendChild(addRow);
-    card.appendChild(todo);
     return card;
   }
 
@@ -1077,14 +1456,17 @@
     const plan = document.createElement('div');
     plan.className = 'field';
     plan.innerHTML = `
-      <label>Next step</label>
-      <input type="text" id="wNext" placeholder="What needs to happen next?">
-      <div style="display:flex; gap:12px; margin-top:10px;">
-        <div style="flex:1"><label>Check on</label><input type="date" id="wCheck"></div>
+      <div style="display:flex; gap:12px;">
+        <div style="flex:1"><label>Owner</label><select id="wOwner">${whoOptions(existing && existing.owner || '', 'Pick owner')}</select></div>
         <div style="flex:1"><label>Likely MQL month</label><select id="wMonth">${monthSelectHTML(existing && existing.mqlMonth || '')}</select></div>
-      </div>`;
+      </div>
+      ${existing ? '' : `<label style="margin-top:14px">First action (optional)</label>
+      <input type="text" id="wAct" placeholder="What happens next?">
+      <div style="display:flex; gap:12px; margin-top:8px;">
+        <div style="flex:1"><select id="wActWho" aria-label="Who owns the first action">${whoOptions('')}</select></div>
+        <div style="flex:1"><input type="date" id="wActDate" aria-label="Due date"></div>
+      </div>`}`;
     wModal.appendChild(plan);
-    if (existing){ wModal.querySelector('#wNext').value = existing.nextStep || ''; wModal.querySelector('#wCheck').value = existing.checkDate || ''; }
 
     const actions = document.createElement('div');
     actions.className = 'modal-actions';
@@ -1106,14 +1488,17 @@
       FIELDS.forEach(f=>{ fields[f.key] = inputs[f.key].value.trim(); });
       const chosen = wModal.querySelector('input[name="winnableRadio"]:checked');
       fields.winnable = chosen ? chosen.value : '';
-      fields.nextStep = wModal.querySelector('#wNext').value.trim();
-      fields.checkDate = wModal.querySelector('#wCheck').value;
       fields.mqlMonth = wModal.querySelector('#wMonth').value;
+      fields.owner = wModal.querySelector('#wOwner').value;
       if (existing){
         await updateWhisper(existing.id, fields);
+        if ((existing.owner || '') !== fields.owner) logEvent(existing.id, fields.owner ? 'Owner set to ' + fields.owner : 'Owner cleared');
       } else {
-        const w = Object.assign({ id: uid('w') }, fields);
+        const w = Object.assign({ id: uid('w'), nextStepMoved: true }, fields);
+        const at = wModal.querySelector('#wAct').value.trim();
+        if (at) w.actions = [{ id: uid('a'), text: at, done:false, owner: wModal.querySelector('#wActWho').value || fields.owner || '', date: wModal.querySelector('#wActDate').value || '', agreed: todayISO(), slips:0 }];
         await createWhisper(w);
+        logEvent(w.id, 'Whisper added' + (at ? '; agreed ' + quote(at) : ''));
         if (opts.addToPush) await pushSave('shortlist/' + w.id, newEntry(w));
       }
       closeWhisperModal();
